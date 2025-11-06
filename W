@@ -179,7 +179,7 @@ searchBar:GetPropertyChangedSignal("Text"):Connect(function()
         end
     end
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 45)
-end)
+end
 
 -- PASTE YOUR ANIMATIONS HERE
 local OriginalAnimations = {
@@ -299,13 +299,11 @@ local function setAnimation(animationType, animationId)
     end
 end
 
+-- REMOVED: The freeze on respawn - now just reapplies animations normally
 local function reapplyAnimationsOnRespawn(character)
     task.wait(1)
     
-    -- Start completely frozen (no animations)
-    freezeToDefaultPose()
-    
-    -- Then reapply saved animations
+    -- Just reapply saved animations (no freezing)
     if lastAnimations.Idle then pcall(function() setAnimation("Idle", lastAnimations.Idle) end) end
     if lastAnimations.Walk then pcall(function() setAnimation("Walk", lastAnimations.Walk) end) end
     if lastAnimations.Run then pcall(function() setAnimation("Run", lastAnimations.Run) end) end
@@ -342,7 +340,7 @@ end
 createTheButton("Reset All Animations", function()
     lastAnimations = {}
     saveLastAnimations()
-    freezeToDefaultPose() -- Also freeze when resetting
+    freezeToDefaultPose() -- Still freezes when manually resetting
     Notify("Reset", "All animations reset", 1)
 end)
 
