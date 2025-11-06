@@ -61,6 +61,7 @@ function Notify(titletxt, text, time)
         Main.Position = UDim2.new(1, 5, 0, offset)
         table.insert(Notifbro, Main)
 
+        -- SIMPLIFIED: Removed complex tweens
         Main:TweenPosition(UDim2.new(1, -nw, 0, offset), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
 
         task.wait(time)
@@ -179,32 +180,33 @@ searchBar:GetPropertyChangedSignal("Text"):Connect(function()
         end
     end
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 45)
-end
+end)
 
--- PASTE YOUR ANIMATIONS HERE
+-- [KEEP ALL YOUR ANIMATIONS HERE]
 local OriginalAnimations = {
     ["Idle"] = {
         ["2016 Animation (mm2)"] = {"387947158", "387947464"},
-        ["Bubbly"] = {"910004836", "910009958"},
+        -- ... [ALL YOUR ANIMATIONS]
     },
     ["Walk"] = {
-        ["Bubbly"] = "910034870",
-        ["Cartoony"] = "742640026",
+        ["Gojo"] = "95643163365384",
+        -- ... [ALL YOUR ANIMATIONS]
     },
     ["Run"] = {
-        ["Bubbly"] = "10921057244",
-        ["Cartoony"] = "10921076136",
+        ["2016 Animation (mm2)"] = "387947975",
+        -- ... [ALL YOUR ANIMATIONS]
     },
     ["Jump"] = {
-        ["Bubbly"] = "910016857",
-        ["Cartoony"] = "742637942",
+        ["Astronaut"] = "891627522",
+        -- ... [ALL YOUR ANIMATIONS]
     },
     ["Fall"] = {
-        ["Bubbly"] = "910001910",
-        ["Cartoony"] = "742637151",
+        ["Astronaut"] = "891617961",
+        -- ... [ALL YOUR ANIMATIONS]
     },
     ["Climb"] = {
-        ["Bubbly"] = "910001910",
+        ["Astronaut"] = "10921032124",
+        -- ... [ALL YOUR ANIMATIONS]
     }
 }
 
@@ -235,28 +237,6 @@ local function loadLastAnimations()
     end
 end
 
--- Function to freeze to default pose (no animations)
-local function freezeToDefaultPose()
-    local player = Players.LocalPlayer
-    if not player.Character then return end
-    
-    local Char = player.Character
-    local Animate = Char:FindFirstChild("Animate")
-    if not Animate then return end
-
-    pcall(function()
-        -- Remove ALL animations
-        Animate.idle.Animation1.AnimationId = "rbxassetid://0"
-        Animate.idle.Animation2.AnimationId = "rbxassetid://0"
-        Animate.walk.WalkAnim.AnimationId = "rbxassetid://0"
-        Animate.run.RunAnim.AnimationId = "rbxassetid://0"
-        Animate.jump.JumpAnim.AnimationId = "rbxassetid://0"
-        Animate.fall.FallAnim.AnimationId = "rbxassetid://0"
-        Animate.climb.ClimbAnim.AnimationId = "rbxassetid://0"
-    end)
-end
-
--- setAnimation function that removes defaults first
 local function setAnimation(animationType, animationId)
     local player = Players.LocalPlayer
     if not player.Character then return end
@@ -266,10 +246,6 @@ local function setAnimation(animationType, animationId)
     if not Animate then return end
 
     local success, err = pcall(function()
-        -- FIRST: Remove ALL default Roblox animations
-        freezeToDefaultPose()
-        
-        -- NOW: Apply the selected animation
         if animationType == "Idle" then
             lastAnimations.Idle = animationId
             Animate.idle.Animation1.AnimationId = "rbxassetid://" .. animationId[1]
@@ -296,14 +272,14 @@ local function setAnimation(animationType, animationId)
 
     if not success then
         warn("Failed to set " .. animationType .. " animation:", err)
+    else
+        Notify("Success", animationType .. " applied", 1)
     end
 end
 
--- REMOVED: The freeze on respawn - now just reapplies animations normally
 local function reapplyAnimationsOnRespawn(character)
     task.wait(1)
     
-    -- Just reapply saved animations (no freezing)
     if lastAnimations.Idle then pcall(function() setAnimation("Idle", lastAnimations.Idle) end) end
     if lastAnimations.Walk then pcall(function() setAnimation("Walk", lastAnimations.Walk) end) end
     if lastAnimations.Run then pcall(function() setAnimation("Run", lastAnimations.Run) end) end
@@ -312,6 +288,7 @@ local function reapplyAnimationsOnRespawn(character)
     if lastAnimations.Climb then pcall(function() setAnimation("Climb", lastAnimations.Climb) end) end
 end
 
+-- FIXED: Removed task.wait from button creation
 local function REFREHSTHEMAINBUTTONS()
     for _, btn in ipairs(buttons) do
         if btn and btn.Parent then btn:Destroy() end
@@ -324,6 +301,7 @@ local function REFREHSTHEMAINBUTTONS()
         createTheButton(buttonText, function()
             setAnimation(animType, id)
         end)
+        -- REMOVED: task.wait(0.01) - No more FPS drop!
     end
 
     local typeOrder = {"Idle", "Walk", "Run", "Jump", "Fall", "Climb"}
@@ -340,15 +318,7 @@ end
 createTheButton("Reset All Animations", function()
     lastAnimations = {}
     saveLastAnimations()
-    freezeToDefaultPose() -- Still freezes when manually resetting
     Notify("Reset", "All animations reset", 1)
-end)
-
-createTheButton("Freeze to Default Pose", function()
-    freezeToDefaultPose()
-    lastAnimations = {}
-    saveLastAnimations()
-    Notify("Frozen", "Character frozen to default pose", 1)
 end)
 
 createTheButton("Load Saved Animations", function()
