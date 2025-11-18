@@ -14,6 +14,45 @@ local camera = workspace.CurrentCamera
 cloneref = cloneref or function(o) return o end
 local GazeGoGui = cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui") or game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
+-- ADDED: Animation stopping functions to fix idle issue
+local function stopAllAnimations()
+    local character = Players.LocalPlayer.Character
+    if not character then
+        character = Players.LocalPlayer.CharacterAdded:Wait()
+    end
+    
+    local humanoid = character:WaitForChild("Humanoid")
+    
+    pcall(function()
+        for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop()
+        end
+    end)
+end
+
+local currentEmoteTrack = nil
+
+local function stopCurrentEmote()
+    if currentEmoteTrack then
+        pcall(function()
+            currentEmoteTrack:Stop()
+        end)
+        currentEmoteTrack = nil
+    end
+end
+
+-- ADDED: Connect to character respawns to fix idle animation
+Players.LocalPlayer.CharacterAdded:Connect(function(character)
+    task.wait(0.5) -- Give time for character to fully load
+    
+    local humanoid = character:WaitForChild("Humanoid")
+    
+    humanoid.Died:Connect(function()
+        stopCurrentEmote()
+        stopAllAnimations()
+    end)
+end)
+
 local Notifbro = {}
 function Notify(titletxt, text, time)
     coroutine.wrap(function()
@@ -278,7 +317,10 @@ local function setAnimation(animationType, animationId)
 end
 
 local function reapplyAnimationsOnRespawn(character)
-    task.wait(1)
+    task.wait(1) -- ADDED: Wait longer for default animations to load properly
+    
+    -- ADDED: Stop any stuck animations first
+    pcall(stopAllAnimations)
     
     if lastAnimations.Idle then pcall(function() setAnimation("Idle", lastAnimations.Idle) end) end
     if lastAnimations.Walk then pcall(function() setAnimation("Walk", lastAnimations.Walk) end) end
@@ -314,6 +356,12 @@ local function REFREHSTHEMAINBUTTONS()
         end
     end
 end
+
+-- ADDED: Stop Animations button
+createTheButton("Stop All Animations", function()
+    stopAllAnimations()
+    Notify("Stopped", "All animations stopped", 1)
+end)
 
 createTheButton("Reset All Animations", function()
     lastAnimations = {}
