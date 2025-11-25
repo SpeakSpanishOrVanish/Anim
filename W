@@ -292,6 +292,7 @@ searchBar:GetPropertyChangedSignal("Text"):Connect(function()
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 45)
 end)
 
+-- FORCE ADD NEW ANIMATIONS TO ORIGINALANIMATIONS TABLE
 OriginalAnimations = {
     ["Idle"] = {
         ["2016 Animation (mm2)"] = {"387947158", "387947464"},
@@ -562,17 +563,10 @@ OriginalAnimations = {
     }
 }
 
-
-local Animations
-if isfile("GreyLikesToSmellUrFeet.json") then
-    local data = readfile("GreyLikesToSmellUrFeet.json")
-    Animations = HttpService:JSONDecode(data)
-    Notify("Loaded", "Animations from GreyLikesToSmellUrFeet.json", 3)
-else
-    writefile("GreyLikesToSmellUrFeet.json", HttpService:JSONEncode(OriginalAnimations))
-    Animations = OriginalAnimations
-    Notify("Saved", "Original animations to GreyLikesToSmellUrFeet.json", 3)
-end
+-- FORCE OVERWRITE ANY EXISTING FILE WITH NEW ANIMATIONS
+local Animations = OriginalAnimations
+writefile("GreyLikesToSmellUrFeet.json", HttpService:JSONEncode(OriginalAnimations))
+Notify("Force Updated", "Added new animation packs to database", 3)
 
 
 local function REFREHSTHEMAINBUTTONS()
@@ -609,6 +603,24 @@ local function REFREHSTHEMAINBUTTONS()
             end
         end
     end
+    
+    -- DEBUG: Check if new animations are in the list
+    local foundWicked = false
+    local foundUnboxed = false
+    for _, btn in ipairs(buttons) do
+        if btn.Text:find("Wicked Dancing Through Offline") then
+            foundWicked = true
+        end
+        if btn.Text:find("Unboxed Animation Pack") then
+            foundUnboxed = true
+        end
+    end
+    
+    if foundWicked and foundUnboxed then
+        Notify("Success", "New animations loaded!", 2)
+    else
+        Notify("Warning", "Some animations may not have loaded", 3)
+    end
 end
 
 REFREHSTHEMAINBUTTONS()
@@ -616,7 +628,8 @@ REFREHSTHEMAINBUTTONS()
 
 local normalSize = getScaledSize(0.3, 0.4)
 local normalPosition = UDim2.new(0.5, -normalSize.X.Offset / 2, 0.5, -normalSize.Y.Offset / 2)
-local smallerSize = getScaledSize(0.15, 0.2)
+-- MUCH SMALLER MINIMIZED SIZE
+local smallerSize = getScaledSize(0.08, 0.06) -- Reduced from 0.15, 0.2 to 0.08, 0.06
 local smallerPosition = UDim2.new(0.5, -smallerSize.X.Offset / 2, 0.5, -smallerSize.Y.Offset / 2)
 local isSmall = false
 local clickCount = 0
@@ -640,7 +653,7 @@ local function handleDoubleClick()
         gazeLabel.Font = Enum.Font.GothamBold -- Different font for "F"
         gazeLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- White color
         gazeLabel.TextScaled = false -- Disable text scaling
-        gazeLabel.TextSize = 24 -- Smaller font size for "F"
+        gazeLabel.TextSize = 18 -- Even smaller font size for tiny box
     end
     isSmall = not isSmall
 end
@@ -925,96 +938,7 @@ Players.LocalPlayer.CharacterAdded:Connect(function(character)
     if lastAnimations.SwimIdle then setAnimation("SwimIdle", lastAnimations.SwimIdle) end
 end)
 
-
-local function LoadAndUpdateAnimations()
-    local onlineAnimations = {}
-    
-    local function fetchOnlineAnimations()
-        local success, result = pcall(function()
-            return game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Gaze-stuff/refs/heads/main/Gaze%20Anim%20Database")
-        end)
-        
-        if success and result then
-            local func, err = loadstring(result)
-            if func then
-                local ok, data = pcall(func)
-                if ok and type(data) == "table" then
-                    return data
-                end
-            end
-        end
-        return nil
-    end
-    
-    onlineAnimations = fetchOnlineAnimations()
-    
-    if not onlineAnimations then
-        Notify("Database", "Failed to load online animations", 3)
-        return
-    end
-    
-    local newAnimationsFound = 0
-    local updatedAnimations = 0
-    
-    for animType, typeAnims in pairs(onlineAnimations) do
-        if not Animations[animType] then
-            Animations[animType] = {}
-            Notify("New Type", "Found new animation type: " .. animType, 3)
-        end
-        
-        for animName, animData in pairs(typeAnims) do
-            local currentData = Animations[animType][animName]
-            
-            if not currentData then
-                Animations[animType][animName] = animData
-                newAnimationsFound = newAnimationsFound + 1
-                Notify("New Animation", "Added: " .. animName .. " (" .. animType .. ")", 2)
-            else
-                local isDifferent = false
-                
-                if type(animData) == "table" and type(currentData) == "table" then
-                    if #animData ~= #currentData then
-                        isDifferent = true
-                    else
-                        for i = 1, #animData do
-                            if tostring(animData[i]) ~= tostring(currentData[i]) then
-                                isDifferent = true
-                                break
-                            end
-                        end
-                    end
-                else
-                    if tostring(animData) ~= tostring(currentData) then
-                        isDifferent = true
-                    end
-                end
-                
-                if isDifferent then
-                    Animations[animType][animName] = animData
-                    updatedAnimations = updatedAnimations + 1
-                    Notify("Updated", animName .. " (" .. animType .. ")", 2)
-                end
-            end
-        end
-    end
-    
-    if newAnimationsFound > 0 or updatedAnimations > 0 then
-        REFREHSTHEMAINBUTTONS()
-    end
-   
-    if newAnimationsFound > 0 or updatedAnimations > 0 then
-        Notify("Database Update", 
-            string.format("New: %d | Updated: %d", newAnimationsFound, updatedAnimations), 
-            5)
-    else
-        Notify("Database", "All animations are up to date!", 3)
-    end
-end
-
-LoadAndUpdateAnimations()
-
-Notify("PLEASE", "Donate me, im poor :(", 1)
 local lt = os.clock() - st
-Notify("loaded", string.format("in %.2f seconds.", lt), 5)
+Notify("Loaded", string.format("in %.2f seconds.", lt), 5)
 
 end)
