@@ -221,7 +221,7 @@ searchBar:GetPropertyChangedSignal("Text"):Connect(function()
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 45)
 end)
 
--- UPDATED: Added all animations from second script except UGC
+-- UPDATED: Added Wicked Dancing Through Life and Unboxed Animation by Amazon
 local OriginalAnimations = {
     ["Idle"] = {
         ["2016 Animation (mm2)"] = {"387947158", "387947464"},
@@ -267,7 +267,9 @@ local OriginalAnimations = {
         ["Werewolf"] = {"1083195517", "1083214717"},
         ["Wicked (Popular)"] = {"118832222982049", "76049494037641"},
         ["No Boundaries (Walmart)"] = {"18747067405", "18747063918"},
-        ["Zombie"] = {"616158929", "616160636"}
+        ["Zombie"] = {"616158929", "616160636"},
+        ["Wicked Dancing Through Life"] = {"123509187015792", "123509187015792"},
+        ["Unboxed Animation by Amazon"] = {"117011755848398", "117011755848398"}
     },
     ["Walk"] = {
         ["Gojo"] = "95643163365384",
@@ -309,7 +311,9 @@ local OriginalAnimations = {
         ["Werewolf"] = "1083178339",
         ["Wicked (Popular)"] = "92072849924640",
         ["No Boundaries (Walmart)"] = "18747074203",
-        ["Zombie"] = "616168032"
+        ["Zombie"] = "616168032",
+        ["Wicked Dancing Through Life"] = "124742764102674",
+        ["Unboxed Animation by Amazon"] = "125108870423182"
     },
     ["Run"] = {
         ["2016 Animation (mm2)"] = "387947975",
@@ -350,7 +354,9 @@ local OriginalAnimations = {
         ["Werewolf"] = "10921336997",
         ["Wicked (Popular)"] = "72301599441680",
         ["No Boundaries (Walmart)"] = "18747070484",
-        ["Zombie"] = "616163682"
+        ["Zombie"] = "616163682",
+        ["Wicked Dancing Through Life"] = "82682578794949",
+        ["Unboxed Animation by Amazon"] = "82219139681769"
     },
     ["Jump"] = {
         ["Astronaut"] = "891627522",
@@ -387,7 +393,9 @@ local OriginalAnimations = {
         ["Werewolf"] = "1083218792",
         ["Wicked (Popular)"] = "104325245285198",
         ["No Boundaries (Walmart)"] = "18747069148",
-        ["Zombie"] = "616161997"
+        ["Zombie"] = "616161997",
+        ["Wicked Dancing Through Life"] = "111157411630082",
+        ["Unboxed Animation by Amazon"] = "110418911914024"
     },
     ["Fall"] = {
         ["Astronaut"] = "891617961",
@@ -423,7 +431,9 @@ local OriginalAnimations = {
         ["Werewolf"] = "1083189019",
         ["Wicked (Popular)"] = "121152442762481",
         ["No Boundaries (Walmart)"] = "18747062535",
-        ["Zombie"] = "616157476"
+        ["Zombie"] = "616157476",
+        ["Wicked Dancing Through Life"] = "79789194522561",
+        ["Unboxed Animation by Amazon"] = "114998633936467"
     },
     ["SwimIdle"] = {
         ["Astronaut"] = "891663592",
@@ -456,7 +466,9 @@ local OriginalAnimations = {
         ["Vampire"] = "10921325443",
         ["Werewolf"] = "10921341319",
         ["Wicked (Popular)"] = "113199415118199",
-        ["No Boundaries (Walmart)"] = "18747071682"
+        ["No Boundaries (Walmart)"] = "18747071682",
+        ["Wicked Dancing Through Life"] = "135050138303161",
+        ["Unboxed Animation by Amazon"] = "137392271797713"
     },
     ["Swim"] = {
         ["Astronaut"] = "891663592",
@@ -488,7 +500,9 @@ local OriginalAnimations = {
         ["Werewolf"] = "10921340419",
         ["Wicked (Popular)"] = "99384245425157",
         ["No Boundaries (Walmart)"] = "18747073181",
-        ["Zombie"] = "616165109"
+        ["Zombie"] = "616165109",
+        ["Wicked Dancing Through Life"] = "94133616443608",
+        ["Unboxed Animation by Amazon"] = "128339543796138"
     },
     ["Climb"] = {
         ["Astronaut"] = "10921032124",
