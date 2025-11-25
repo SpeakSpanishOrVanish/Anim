@@ -14,7 +14,6 @@ local camera = workspace.CurrentCamera
 cloneref = cloneref or function(o) return o end
 local GazeGoGui = cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui") or game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-
 local Notifbro = {}
 function Notify(titletxt, text, time)
     coroutine.wrap(function()
@@ -100,13 +99,10 @@ if GazeGoGui:FindFirstChild(guiName) then
     return
 end
 
-
-
 local function getScaledSize(relativeWidth, relativeHeight)
     local viewportSize = camera.ViewportSize
     return UDim2.new(0, math.floor(viewportSize.X * relativeWidth), 0, math.floor(viewportSize.Y * relativeHeight))
 end
-
 
 local core = cloneref(game.CoreGui)
 local old = core:FindFirstChild("DraggableGui")
@@ -116,16 +112,15 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "DraggableGui"
 screenGui.Parent = core
 
-
 local frame = Instance.new("TextButton")
 frame.Name = "GazeBro"
 frame.Text = ""
 frame.Size = getScaledSize(0.3, 0.4)
 frame.Position = UDim2.new(0.5, -getScaledSize(0.3,0.4).X.Offset/2, 0.5, -getScaledSize(0.3,0.4).Y.Offset/2)
-frame.BackgroundColor3 = Color3.fromRGB(139, 0, 0) -- Crimson red
+frame.BackgroundColor3 = Color3.fromRGB(50,50,50)
 frame.BackgroundTransparency = 0.2
 frame.BorderSizePixel = 2
-frame.BorderColor3 = Color3.new(0, 0, 0) -- Black border
+frame.BorderColor3 = Color3.new(0,0,0)
 frame.Active = true
 frame.Draggable = true
 frame.Parent = screenGui
@@ -197,27 +192,14 @@ frame.InputEnded:Connect(function(input)
     end
 end)
 
-local labelSize = UDim2.new(1, 0, 0.1, 0)
-
-local gazeLabel = Instance.new("TextLabel")
-gazeLabel.Name = "GazeLabel"
-gazeLabel.Text = "" -- Removed "GAZE" text
-gazeLabel.Font = Enum.Font.SourceSansBold
-gazeLabel.TextScaled = true
-gazeLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
-gazeLabel.BackgroundTransparency = 1
-gazeLabel.Size = labelSize
-gazeLabel.Position = UDim2.new(0, 0, 0, 0)
-gazeLabel.Parent = frame
-
 local searchBar = Instance.new("TextBox")
 searchBar.Name = "SearchBar"
 searchBar.Text = ""
 searchBar.PlaceholderText = "Search..."
 searchBar.Font = Enum.Font.SourceSans
 searchBar.TextScaled = true
-searchBar.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
-searchBar.BackgroundColor3 = Color3.fromRGB(50, 0, 0) -- Dark red background
+searchBar.TextColor3 = Color3.fromRGB(200, 200, 200)
+searchBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 searchBar.BorderSizePixel = 0
 searchBar.Size = UDim2.new(0.9, 0, 0.2, 0)
 searchBar.Position = UDim2.new(0.05, 0, 0.10, 0)
@@ -228,7 +210,7 @@ local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Name = "ScrollFrame"
 scrollFrame.Size = UDim2.new(0.9, 0, 0.7, 0)
 scrollFrame.Position = UDim2.new(0.05, 0, 0.3, 0)
-scrollFrame.BackgroundColor3 = Color3.fromRGB(50, 0, 0) -- Dark red background
+scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 scrollFrame.BorderSizePixel = 0
 scrollFrame.ScrollBarThickness = 0
 scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
@@ -236,11 +218,8 @@ scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollFrame.ScrollBarImageTransparency = 1
 scrollFrame.Parent = frame
 
-
 local buttons = {}
-
 local createdSet = {}
-
 
 local function createTheButton(text, callback)
     if createdSet[text] then
@@ -252,11 +231,11 @@ local function createTheButton(text, callback)
     button.Text = text
     button.Font = Enum.Font.SourceSansBold
     button.TextScaled = true
-    button.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
-    button.BackgroundColor3 = Color3.fromRGB(100, 0, 0) -- Dark red background
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     button.Size = UDim2.new(1, 0, 0, 40)
     button.Position = UDim2.new(1, 0, 0, #buttons * 45)
-    button.BackgroundTransparency = 0.2
+    button.BackgroundTransparency = 1
     button.BorderSizePixel = 0
     button.Parent = scrollFrame
 
@@ -267,7 +246,7 @@ local function createTheButton(text, callback)
     local tweenInfoLocal = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     local goal = {
         Position = UDim2.new(0, 0, 0, #buttons * 45),
-        BackgroundTransparency = 0.2
+        BackgroundTransparency = 0
     }
     local tween = TweenService:Create(button, tweenInfoLocal, goal)
     tween:Play()
@@ -275,7 +254,6 @@ local function createTheButton(text, callback)
     table.insert(buttons, button)
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #buttons * 45)
 end
-
 
 searchBar:GetPropertyChangedSignal("Text"):Connect(function()
     local searchText = searchBar.Text:lower()
@@ -292,7 +270,6 @@ searchBar:GetPropertyChangedSignal("Text"):Connect(function()
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 45)
 end)
 
--- FORCE ADD NEW ANIMATIONS TO ORIGINALANIMATIONS TABLE
 OriginalAnimations = {
     ["Idle"] = {
         ["2016 Animation (mm2)"] = {"387947158", "387947464"},
@@ -314,8 +291,6 @@ OriginalAnimations = {
         ["OldSchool"] = {"10921230744", "10921232093"},
         ["Patrol"] = {"1149612882", "1150842221"},
         ["Pirate"] = {"750781874", "750782770"},
-        ["Default Retarget"] = {"95884606664820", "95884606664820"},
-        ["Very Long"] = {"18307781743", "18307781743"},
         ["Sway"] = {"560832030", "560833564"},
         ["Popstar"] = {"1212900985", "1150842221"},
         ["Princess"] = {"941003647", "941013098"},
@@ -332,9 +307,7 @@ OriginalAnimations = {
         ["Udzal"] = {"3303162274", "3303162549"},
         ["Vampire"] = {"1083445855", "1083450166"},
         ["Werewolf"] = {"1083195517", "1083214717"},
-        ["Zombie"] = {"616158929", "616160636"},
-        ["Wicked Dancing Through Offline"] = {"82682578794949", "82682578794949"},
-        ["Unboxed Animation Pack"] = {"82219139681769", "82219139681769"}
+        ["Zombie"] = {"616158929", "616160636"}
     },
     ["Walk"] = {
         ["Gojo"] = "95643163365384",
@@ -355,7 +328,6 @@ OriginalAnimations = {
         ["OldSchool"] = "10921244891",
         ["Patrol"] = "1151231493",
         ["Pirate"] = "750785693",
-        ["Default Retarget"] = "115825677624788",
         ["Popstar"] = "1212980338",
         ["Princess"] = "941028902",
         ["R6"] = "12518152696",
@@ -370,9 +342,7 @@ OriginalAnimations = {
         ["Udzal"] = "3303162967",
         ["Vampire"] = "1083473930",
         ["Werewolf"] = "1083178339",
-        ["Zombie"] = "616168032",
-        ["Wicked Dancing Through Offline"] = "94133616443608",
-        ["Unboxed Animation Pack"] = "128339543796138"
+        ["Zombie"] = "616168032"
     },
     ["Run"] = {
         ["2016 Animation (mm2)"] = "387947975",
@@ -394,7 +364,6 @@ OriginalAnimations = {
         ["OldSchool"] = "10921240218",
         ["Patrol"] = "1150967949",
         ["Pirate"] = "750783738",
-        ["Default Retarget"] = "102294264237491",
         ["Popstar"] = "1212980348",
         ["Princess"] = "941015281",
         ["R6"] = "12518152696",
@@ -407,9 +376,7 @@ OriginalAnimations = {
         ["Toy"] = "10921306285",
         ["Vampire"] = "10921320299",
         ["Werewolf"] = "10921336997",
-        ["Zombie"] = "616163682",
-        ["Wicked Dancing Through Offline"] = "79789194522561",
-        ["Unboxed Animation Pack"] = "114998633936467"
+        ["Zombie"] = "616163682"
     },
     ["Jump"] = {
         ["Astronaut"] = "891627522",
@@ -427,7 +394,6 @@ OriginalAnimations = {
         ["OldSchool"] = "10921242013",
         ["Patrol"] = "1148811837",
         ["Pirate"] = "750782230",
-        ["Default Retarget"] = "117150377950987",
         ["Popstar"] = "1212954642",
         ["Princess"] = "941008832",
         ["Robot"] = "616090535",
@@ -440,9 +406,7 @@ OriginalAnimations = {
         ["Toy"] = "10921308158",
         ["Vampire"] = "1083455352",
         ["Werewolf"] = "1083218792",
-        ["Zombie"] = "616161997",
-        ["Wicked Dancing Through Offline"] = "111157411630082",
-        ["Unboxed Animation Pack"] = "110418911914024"
+        ["Zombie"] = "616161997"
     },
     ["Fall"] = {
         ["Astronaut"] = "891617961",
@@ -459,7 +423,6 @@ OriginalAnimations = {
         ["OldSchool"] = "10921241244",
         ["Patrol"] = "1148863382",
         ["Pirate"] = "750780242",
-        ["Default Retarget"] = "110205622518029",
         ["Popstar"] = "1212900995",
         ["Princess"] = "941000007",
         ["Robot"] = "616087089",
@@ -472,9 +435,7 @@ OriginalAnimations = {
         ["Toy"] = "782846423",
         ["Vampire"] = "1083443587",
         ["Werewolf"] = "1083189019",
-        ["Zombie"] = "616157476",
-        ["Wicked Dancing Through Offline"] = "124742764102674",
-        ["Unboxed Animation Pack"] = "125108870423182"
+        ["Zombie"] = "616157476"
     },
     ["SwimIdle"] = {
         ["Astronaut"] = "891663592",
@@ -527,9 +488,7 @@ OriginalAnimations = {
         ["Toy"] = "10921309319",
         ["Vampire"] = "10921324408",
         ["Werewolf"] = "10921340419",
-        ["Zombie"] = "616165109",
-        ["Wicked Dancing Through Offline"] = "135050138303161",
-        ["Unboxed Animation Pack"] = "137392271797713"
+        ["Zombie"] = "616165109"
     },
     ["Climb"] = {
         ["Astronaut"] = "10921032124",
@@ -557,17 +516,30 @@ OriginalAnimations = {
         ["Toy"] = "10921300839",
         ["Vampire"] = "1083439238",
         ["WereWolf"] = "10921329322",
-        ["Zombie"] = "616156119",
-        ["Wicked Dancing Through Offline"] = "123509187015792",
-        ["Unboxed Animation Pack"] = "117011755848398"
+        ["Zombie"] = "616156119"
     }
 }
 
--- FORCE OVERWRITE ANY EXISTING FILE WITH NEW ANIMATIONS
-local Animations = OriginalAnimations
-writefile("GreyLikesToSmellUrFeet.json", HttpService:JSONEncode(OriginalAnimations))
-Notify("Force Updated", "Added new animation packs to database", 3)
+local Animations
+if isfile("GreyLikesToSmellUrFeet.json") then
+    local data = readfile("GreyLikesToSmellUrFeet.json")
+    Animations = HttpService:JSONDecode(data)
+else
+    writefile("GreyLikesToSmellUrFeet.json", HttpService:JSONEncode(OriginalAnimations))
+    Animations = OriginalAnimations
+end
 
+local FLabel = Instance.new("TextLabel")
+FLabel.Name = "FLabel"
+FLabel.Text = "F"
+FLabel.Font = Enum.Font.GothamBold
+FLabel.TextScaled = true
+FLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+FLabel.BackgroundTransparency = 1
+FLabel.Size = UDim2.new(1, 0, 1, 0)
+FLabel.Position = UDim2.new(0, 0, 0, 0)
+FLabel.Visible = false
+FLabel.Parent = frame
 
 local function REFREHSTHEMAINBUTTONS()
     for _, btn in ipairs(buttons) do
@@ -581,15 +553,13 @@ local function REFREHSTHEMAINBUTTONS()
         createTheButton(buttonText, function()
             pcall(function()
                 setAnimation(animType, id)
-                Notify(animType, name, 1)
             end)
         end)
     end
 
     local typeOrder = {"Idle", "Walk", "Run", "Jump", "Fall", "Swim", "SwimIdle", "Climb"}
-    local RunService = game:GetService("RunService")
-
     local count = 0
+
     for _, animType in ipairs(typeOrder) do
         local anims = Animations[animType]
         if anims then
@@ -598,38 +568,18 @@ local function REFREHSTHEMAINBUTTONS()
                 count += 1
                 if count >= 10 then
                     count = 0
-                    RunService.RenderStepped:Wait()
+                    task.wait()
                 end
             end
         end
-    end
-    
-    -- DEBUG: Check if new animations are in the list
-    local foundWicked = false
-    local foundUnboxed = false
-    for _, btn in ipairs(buttons) do
-        if btn.Text:find("Wicked Dancing Through Offline") then
-            foundWicked = true
-        end
-        if btn.Text:find("Unboxed Animation Pack") then
-            foundUnboxed = true
-        end
-    end
-    
-    if foundWicked and foundUnboxed then
-        Notify("Success", "New animations loaded!", 2)
-    else
-        Notify("Warning", "Some animations may not have loaded", 3)
     end
 end
 
 REFREHSTHEMAINBUTTONS()
 
-
 local normalSize = getScaledSize(0.3, 0.4)
 local normalPosition = UDim2.new(0.5, -normalSize.X.Offset / 2, 0.5, -normalSize.Y.Offset / 2)
--- MUCH SMALLER MINIMIZED SIZE
-local smallerSize = getScaledSize(0.08, 0.06) -- Reduced from 0.15, 0.2 to 0.08, 0.06
+local smallerSize = getScaledSize(0.15, 0.2)
 local smallerPosition = UDim2.new(0.5, -smallerSize.X.Offset / 2, 0.5, -smallerSize.Y.Offset / 2)
 local isSmall = false
 local clickCount = 0
@@ -640,20 +590,13 @@ local function handleDoubleClick()
         frame.Position = normalPosition
         scrollFrame.Visible = true
         searchBar.Visible = true
-        gazeLabel.Size = labelSize
-        gazeLabel.Text = "" -- Empty in maximized mode
-        gazeLabel.TextScaled = true -- Reset to scaled
+        FLabel.Visible = false
     else
         frame.Size = smallerSize
         frame.Position = smallerPosition
         scrollFrame.Visible = false
         searchBar.Visible = false
-        gazeLabel.Size = UDim2.new(1, 0, 1, 0)
-        gazeLabel.Text = "F"
-        gazeLabel.Font = Enum.Font.GothamBold -- Different font for "F"
-        gazeLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- White color
-        gazeLabel.TextScaled = false -- Disable text scaling
-        gazeLabel.TextSize = 18 -- Even smaller font size for tiny box
+        FLabel.Visible = true
     end
     isSmall = not isSmall
 end
@@ -669,7 +612,6 @@ frame.MouseButton1Click:Connect(function()
         clickCount = 0
     end
 end)
-
 
 local lastAnimations = {}
 
@@ -798,39 +740,7 @@ local function ResetClimb()
     end)
 end
 
-
-local function freeze()
-    local player = cloneref(game:GetService("Players")).LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid.PlatformStand = true
-    if player and player.Character then
-        task.spawn(function()
-            for i, part in ipairs(player.Character:GetDescendants()) do
-                if part:IsA("BasePart") and not part.Anchored then
-                    part.Anchored = true
-                end
-            end
-        end)
-    end
-end
-local function unfreeze()
-    local player = cloneref(game:GetService("Players")).LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid.PlatformStand = false
-    if player and player.Character then
-        task.spawn(function()
-            for i, part in ipairs(player.Character:GetDescendants()) do
-                if part:IsA("BasePart") and part.Anchored then
-                    part.Anchored = false
-                end
-            end
-        end)
-    end
-end
-
-local function saveLastAnimations(lasyAnimations)
+local function saveLastAnimations()
     local data = HttpService:JSONEncode(lastAnimations)
     pcall(function() writefile("MeWhenUrMom.json", data) end)
 end
@@ -842,9 +752,6 @@ function setAnimation(animationType, animationId)
     local Char = player.Character
     local Animate = Char:FindFirstChild("Animate")
     if not Animate then return end
-
-    freeze()
-    wait(0.1)
 
     local success, err = pcall(function()
         if animationType == "Idle" then
@@ -889,22 +796,18 @@ function setAnimation(animationType, animationId)
             Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
             refreshclimb()
         end
-        saveLastAnimations(lastAnimations)
+        saveLastAnimations()
     end)
 
     if not success then
         warn("Failed to set animation:", err)
     end
-
-    wait(0.1)
-    unfreeze()
 end
 
 local function loadLastAnimations()
     if isfile("MeWhenUrMom.json") then
         local data = readfile("MeWhenUrMom.json")
         local lastAnimationsData = HttpService:JSONDecode(data)
-        Notify("Yippe", "Saved Animation Found, loading it", 3)
         if lastAnimationsData.Idle then setAnimation("Idle", lastAnimationsData.Idle) end
         if lastAnimationsData.Walk then setAnimation("Walk", lastAnimationsData.Walk) end
         if lastAnimationsData.Run then setAnimation("Run", lastAnimationsData.Run) end
@@ -913,20 +816,13 @@ local function loadLastAnimations()
         if lastAnimationsData.Climb then setAnimation("Climb", lastAnimationsData.Climb) end
         if lastAnimationsData.Swim then setAnimation("Swim", lastAnimationsData.Swim) end
         if lastAnimationsData.SwimIdle then setAnimation("SwimIdle", lastAnimationsData.SwimIdle) end
-    else
-        Notify("First?", "No Saved Animations Found", 5)
     end
 end
-
-loadLastAnimations()
 
 Players.LocalPlayer.CharacterAdded:Connect(function(character)
     local hum = character:WaitForChild("Humanoid")
     local animate = character:WaitForChild("Animate", 10)
-    if not animate then
-        Notify("Error", "Animate script not found after respawn!", 5)
-        return
-    end
+    if not animate then return end
 
     if lastAnimations.Idle then setAnimation("Idle", lastAnimations.Idle) end
     if lastAnimations.Walk then setAnimation("Walk", lastAnimations.Walk) end
@@ -938,7 +834,9 @@ Players.LocalPlayer.CharacterAdded:Connect(function(character)
     if lastAnimations.SwimIdle then setAnimation("SwimIdle", lastAnimations.SwimIdle) end
 end)
 
+loadLastAnimations()
+
 local lt = os.clock() - st
-Notify("Loaded", string.format("in %.2f seconds.", lt), 5)
+Notify("Loaded", string.format("in %.2f seconds.", lt), 3)
 
 end)
