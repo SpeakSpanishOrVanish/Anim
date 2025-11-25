@@ -629,6 +629,7 @@ local function handleDoubleClick()
         searchBar.Visible = true
         gazeLabel.Size = labelSize
         gazeLabel.Text = "" -- Empty in maximized mode
+        gazeLabel.TextScaled = true -- Reset to scaled
     else
         frame.Size = smallerSize
         frame.Position = smallerPosition
@@ -638,6 +639,8 @@ local function handleDoubleClick()
         gazeLabel.Text = "F"
         gazeLabel.Font = Enum.Font.GothamBold -- Different font for "F"
         gazeLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- White color
+        gazeLabel.TextScaled = false -- Disable text scaling
+        gazeLabel.TextSize = 24 -- Smaller font size for "F"
     end
     isSmall = not isSmall
 end
