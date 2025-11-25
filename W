@@ -615,129 +615,145 @@ end)
 
 local lastAnimations = {}
 
+-- Improved animation handling
 local function StopAnim()
     local speaker = Players.LocalPlayer
-    local Char = speaker.Character or speaker.CharacterAdded:Wait()
+    local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
     if Hum then
         for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-            track:Stop(0)
+            if track then
+                track:Stop(0.1) -- Smooth stop
+            end
         end
     end
 end
 
+-- Improved refresh functions without state changes
 local function refresh()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:wait(0.1)
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+    -- No state change to prevent movement
 end
 
 local function refreshswim()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:wait(0.1)
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-    task.wait(0.1)
-    humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+    -- No state change to prevent movement
 end
 
 local function refreshclimb()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:wait(0.1)
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-    task.wait(0.1)
-    humanoid:ChangeState(Enum.HumanoidStateType.Climbing)
+    -- No state change to prevent movement
 end
 
+-- Improved reset functions
 local function ResetIdle()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    for _, v in next, Hum:GetPlayingAnimationTracks() do v:Stop(0) end
-    pcall(function()
-        local Animate = Char.Animate
-        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=0"
-        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=0"
-    end)
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and (track.Name == "idle" or track.Name == "IdleAnimation") then
+            track:Stop(0.1)
+        end
+    end
 end
 
 local function ResetWalk()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    for _, v in next, Hum:GetPlayingAnimationTracks() do v:Stop(0) end
-    pcall(function()
-        local Animate = Char.Animate
-        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=0"
-    end)
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "walk" then
+            track:Stop(0.1)
+        end
+    end
 end
 
 local function ResetRun()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    for _, v in next, Hum:GetPlayingAnimationTracks() do v:Stop(0) end
-    pcall(function()
-        local Animate = Char.Animate
-        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=0"
-    end)
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "run" then
+            track:Stop(0.1)
+        end
+    end
 end
 
 local function ResetJump()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    for _, v in next, Hum:GetPlayingAnimationTracks() do v:Stop(0) end
-    pcall(function()
-        local Animate = Char.Animate
-        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=0"
-    end)
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "jump" then
+            track:Stop(0.1)
+        end
+    end
 end
 
 local function ResetFall()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    for _, v in next, Hum:GetPlayingAnimationTracks() do v:Stop(0) end
-    pcall(function()
-        local Animate = Char.Animate
-        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=0"
-    end)
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "fall" then
+            track:Stop(0.1)
+        end
+    end
 end
 
 local function ResetSwim()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    for _, v in next, Hum:GetPlayingAnimationTracks() do v:Stop(0) end
-    pcall(function()
-        local Animate = Char.Animate
-        if Animate.swim then Animate.swim.Swim.AnimationId = "http://www.roblox.com/asset/?id=0" end
-    end)
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "swim" then
+            track:Stop(0.1)
+        end
+    end
 end
 
 local function ResetSwimIdle()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    for _, v in next, Hum:GetPlayingAnimationTracks() do v:Stop(0) end
-    pcall(function()
-        local Animate = Char.Animate
-        if Animate.swimidle then Animate.swimidle.SwimIdle.AnimationId = "http://www.roblox.com/asset/?id=0" end
-    end)
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "swimidle" then
+            track:Stop(0.1)
+        end
+    end
 end
 
 local function ResetClimb()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
+    if not Char then return end
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    for _, v in next, Hum:GetPlayingAnimationTracks() do v:Stop(0) end
-    pcall(function()
-        local Animate = Char.Animate
-        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=0"
-    end)
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "climb" then
+            track:Stop(0.1)
+        end
+    end
 end
 
 local function saveLastAnimations()
@@ -745,58 +761,76 @@ local function saveLastAnimations()
     pcall(function() writefile("MeWhenUrMom.json", data) end)
 end
 
+-- Improved setAnimation function
 function setAnimation(animationType, animationId)
     if type(animationId) ~= "table" and type(animationId) ~= "string" then return end
+    
     local player = Players.LocalPlayer
-    if not player.Character then return end
+    if not player.Character then 
+        -- Wait for character if it doesn't exist
+        player.CharacterAdded:Wait()
+        task.wait(0.5)
+    end
+    
     local Char = player.Character
+    if not Char then return end
+    
     local Animate = Char:FindFirstChild("Animate")
-    if not Animate then return end
+    if not Animate then 
+        -- Wait for Animate script if it doesn't exist
+        repeat task.wait() until Char:FindFirstChild("Animate") or not Char.Parent
+        Animate = Char:FindFirstChild("Animate")
+        if not Animate then return end
+    end
 
     local success, err = pcall(function()
+        -- Stop current animations smoothly first
+        StopAnim()
+        task.wait(0.05) -- Small delay to ensure clean stop
+        
         if animationType == "Idle" then
             lastAnimations.Idle = animationId
             ResetIdle()
             Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[1]
             Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[2]
-            refresh()
         elseif animationType == "Walk" then
             lastAnimations.Walk = animationId
             ResetWalk()
             Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
-            refresh()
         elseif animationType == "Run" then
             lastAnimations.Run = animationId
             ResetRun()
             Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
-            refresh()
         elseif animationType == "Jump" then
             lastAnimations.Jump = animationId
             ResetJump()
             Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
-            refresh()
         elseif animationType == "Fall" then
             lastAnimations.Fall = animationId
             ResetFall()
             Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
-            refresh()
         elseif animationType == "Swim" and Animate:FindFirstChild("swim") then
             lastAnimations.Swim = animationId
             ResetSwim()
             Animate.swim.Swim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
-            refreshswim()
         elseif animationType == "SwimIdle" and Animate:FindFirstChild("swimidle") then
             lastAnimations.SwimIdle = animationId
             ResetSwimIdle()
             Animate.swimidle.SwimIdle.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
-            refreshswim()
         elseif animationType == "Climb" then
             lastAnimations.Climb = animationId
             ResetClimb()
             Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
-            refreshclimb()
         end
+        
         saveLastAnimations()
+        
+        -- Force animation playback by triggering movement
+        local humanoid = Char:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            -- Small movement to trigger animations
+            humanoid:Move(Vector3.new(0, 0, 0))
+        end
     end)
 
     if not success then
@@ -819,19 +853,50 @@ local function loadLastAnimations()
     end
 end
 
+-- Improved character added connection
 Players.LocalPlayer.CharacterAdded:Connect(function(character)
+    task.wait(1) -- Wait for character to fully load
+    
     local hum = character:WaitForChild("Humanoid")
     local animate = character:WaitForChild("Animate", 10)
     if not animate then return end
 
-    if lastAnimations.Idle then setAnimation("Idle", lastAnimations.Idle) end
-    if lastAnimations.Walk then setAnimation("Walk", lastAnimations.Walk) end
-    if lastAnimations.Run then setAnimation("Run", lastAnimations.Run) end
-    if lastAnimations.Jump then setAnimation("Jump", lastAnimations.Jump) end
-    if lastAnimations.Fall then setAnimation("Fall", lastAnimations.Fall) end
-    if lastAnimations.Climb then setAnimation("Climb", lastAnimations.Climb) end
-    if lastAnimations.Swim then setAnimation("Swim", lastAnimations.Swim) end
-    if lastAnimations.SwimIdle then setAnimation("SwimIdle", lastAnimations.SwimIdle) end
+    -- Wait a bit more for everything to stabilize
+    task.wait(0.5)
+    
+    -- Reload saved animations
+    if lastAnimations.Idle then 
+        task.wait(0.1)
+        setAnimation("Idle", lastAnimations.Idle) 
+    end
+    if lastAnimations.Walk then 
+        task.wait(0.1)
+        setAnimation("Walk", lastAnimations.Walk) 
+    end
+    if lastAnimations.Run then 
+        task.wait(0.1)
+        setAnimation("Run", lastAnimations.Run) 
+    end
+    if lastAnimations.Jump then 
+        task.wait(0.1)
+        setAnimation("Jump", lastAnimations.Jump) 
+    end
+    if lastAnimations.Fall then 
+        task.wait(0.1)
+        setAnimation("Fall", lastAnimations.Fall) 
+    end
+    if lastAnimations.Climb then 
+        task.wait(0.1)
+        setAnimation("Climb", lastAnimations.Climb) 
+    end
+    if lastAnimations.Swim then 
+        task.wait(0.1)
+        setAnimation("Swim", lastAnimations.Swim) 
+    end
+    if lastAnimations.SwimIdle then 
+        task.wait(0.1)
+        setAnimation("SwimIdle", lastAnimations.SwimIdle) 
+    end
 end)
 
 loadLastAnimations()
