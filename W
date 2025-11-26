@@ -190,7 +190,7 @@ frame.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         holding = false
     end
-end)
+end
 
 local searchBar = Instance.new("TextBox")
 searchBar.Name = "SearchBar"
@@ -529,17 +529,26 @@ else
     Animations = OriginalAnimations
 end
 
+-- Create circular F label for minimized mode
 local FLabel = Instance.new("TextLabel")
 FLabel.Name = "FLabel"
 FLabel.Text = "F"
 FLabel.Font = Enum.Font.GothamBold
 FLabel.TextScaled = true
 FLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-FLabel.BackgroundTransparency = 1
-FLabel.Size = UDim2.new(1, 0, 1, 0)
-FLabel.Position = UDim2.new(0, 0, 0, 0)
+FLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+FLabel.BackgroundTransparency = 0.2
+FLabel.BorderSizePixel = 2
+FLabel.BorderColor3 = Color3.new(0, 0, 0)
+FLabel.Size = UDim2.new(0, 60, 0, 60) -- Circular size
+FLabel.Position = UDim2.new(0.5, -30, 0.5, -30)
 FLabel.Visible = false
-FLabel.Parent = frame
+FLabel.Parent = screenGui
+
+-- Make it circular
+FLabel:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+    FLabel.CornerRadius = UDim.new(1, 0) -- Makes it perfectly circular
+end)
 
 local function REFREHSTHEMAINBUTTONS()
     for _, btn in ipairs(buttons) do
@@ -579,24 +588,26 @@ REFREHSTHEMAINBUTTONS()
 
 local normalSize = getScaledSize(0.3, 0.4)
 local normalPosition = UDim2.new(0.5, -normalSize.X.Offset / 2, 0.5, -normalSize.Y.Offset / 2)
-local smallerSize = getScaledSize(0.15, 0.2)
-local smallerPosition = UDim2.new(0.5, -smallerSize.X.Offset / 2, 0.5, -smallerSize.Y.Offset / 2)
+local circleSize = UDim2.new(0, 60, 0, 60) -- Small circle size
+local circlePosition = UDim2.new(0.5, -30, 0.5, -30)
 local isSmall = false
 local clickCount = 0
 
 local function handleDoubleClick()
     if isSmall then
+        -- Restore to normal size
         frame.Size = normalSize
         frame.Position = normalPosition
         scrollFrame.Visible = true
         searchBar.Visible = true
         FLabel.Visible = false
+        frame.Visible = true
     else
-        frame.Size = smallerSize
-        frame.Position = smallerPosition
-        scrollFrame.Visible = false
-        searchBar.Visible = false
+        -- Minimize to circle
+        frame.Visible = false
         FLabel.Visible = true
+        FLabel.Size = circleSize
+        FLabel.Position = circlePosition
     end
     isSmall = not isSmall
 end
@@ -613,9 +624,25 @@ frame.MouseButton1Click:Connect(function()
     end
 end)
 
+FLabel.MouseButton1Click:Connect(function()
+    clickCount += 1
+    if clickCount == 1 then
+        task.delay(0.45, function()
+            clickCount = 0
+        end)
+    elseif clickCount == 2 then
+        handleDoubleClick()
+        clickCount = 0
+    end
+end)
+
+-- Make FLabel draggable too
+FLabel.Active = true
+FLabel.Draggable = true
+
 local lastAnimations = {}
 
--- Improved animation handling
+-- Improved animation handling - no reset functions needed
 local function StopAnim()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
@@ -623,135 +650,9 @@ local function StopAnim()
     local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
     if Hum then
         for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-            if track then
-                track:Stop(0.1) -- Smooth stop
+            if track and track.IsPlaying then
+                track:Stop(0.05) -- Very smooth stop
             end
-        end
-    end
-end
-
--- Improved refresh functions without state changes
-local function refresh()
-    -- No state change to prevent movement
-end
-
-local function refreshswim()
-    -- No state change to prevent movement
-end
-
-local function refreshclimb()
-    -- No state change to prevent movement
-end
-
--- Improved reset functions
-local function ResetIdle()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and (track.Name == "idle" or track.Name == "IdleAnimation") then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetWalk()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "walk" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetRun()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "run" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetJump()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "jump" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetFall()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "fall" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetSwim()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "swim" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetSwimIdle()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "swimidle" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetClimb()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "climb" then
-            track:Stop(0.1)
         end
     end
 end
@@ -761,13 +662,12 @@ local function saveLastAnimations()
     pcall(function() writefile("MeWhenUrMom.json", data) end)
 end
 
--- Improved setAnimation function
+-- Completely rewritten setAnimation function - no resets, seamless transitions
 function setAnimation(animationType, animationId)
     if type(animationId) ~= "table" and type(animationId) ~= "string" then return end
     
     local player = Players.LocalPlayer
     if not player.Character then 
-        -- Wait for character if it doesn't exist
         player.CharacterAdded:Wait()
         task.wait(0.5)
     end
@@ -777,58 +677,43 @@ function setAnimation(animationType, animationId)
     
     local Animate = Char:FindFirstChild("Animate")
     if not Animate then 
-        -- Wait for Animate script if it doesn't exist
         repeat task.wait() until Char:FindFirstChild("Animate") or not Char.Parent
         Animate = Char:FindFirstChild("Animate")
         if not Animate then return end
     end
 
     local success, err = pcall(function()
-        -- Stop current animations smoothly first
-        StopAnim()
-        task.wait(0.05) -- Small delay to ensure clean stop
+        -- Save the animation first
+        lastAnimations[animationType] = animationId
         
+        -- Apply the animation directly without stopping current ones
         if animationType == "Idle" then
-            lastAnimations.Idle = animationId
-            ResetIdle()
             Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[1]
             Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[2]
         elseif animationType == "Walk" then
-            lastAnimations.Walk = animationId
-            ResetWalk()
             Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
         elseif animationType == "Run" then
-            lastAnimations.Run = animationId
-            ResetRun()
             Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
         elseif animationType == "Jump" then
-            lastAnimations.Jump = animationId
-            ResetJump()
             Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
         elseif animationType == "Fall" then
-            lastAnimations.Fall = animationId
-            ResetFall()
             Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
         elseif animationType == "Swim" and Animate:FindFirstChild("swim") then
-            lastAnimations.Swim = animationId
-            ResetSwim()
             Animate.swim.Swim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
         elseif animationType == "SwimIdle" and Animate:FindFirstChild("swimidle") then
-            lastAnimations.SwimIdle = animationId
-            ResetSwimIdle()
             Animate.swimidle.SwimIdle.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
         elseif animationType == "Climb" then
-            lastAnimations.Climb = animationId
-            ResetClimb()
             Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId
         end
         
         saveLastAnimations()
         
-        -- Force animation playback by triggering movement
+        -- Trigger animation update by simulating movement
         local humanoid = Char:FindFirstChildOfClass("Humanoid")
         if humanoid then
-            -- Small movement to trigger animations
+            -- This triggers the animations to update without resetting character pose
+            humanoid:Move(Vector3.new(0.001, 0, 0.001))
+            task.wait(0.01)
             humanoid:Move(Vector3.new(0, 0, 0))
         end
     end)
@@ -857,14 +742,13 @@ end
 Players.LocalPlayer.CharacterAdded:Connect(function(character)
     task.wait(1) -- Wait for character to fully load
     
-    local hum = character:WaitForChild("Humanoid")
     local animate = character:WaitForChild("Animate", 10)
     if not animate then return end
 
     -- Wait a bit more for everything to stabilize
     task.wait(0.5)
     
-    -- Reload saved animations
+    -- Reload saved animations with delays
     if lastAnimations.Idle then 
         task.wait(0.1)
         setAnimation("Idle", lastAnimations.Idle) 
