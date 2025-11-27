@@ -123,9 +123,9 @@ pcall(function()
     circleCorner.CornerRadius = UDim.new(1, 0) -- Perfect circle
     circleCorner.Parent = circleFrame
 
-    -- Animation data
+    -- Animation data - FIXED STRUCTURE
     local Animations = {
-        ["Idle"] = {
+        Idle = {
             ["2016 Animation"] = {"387947158", "387947464"},
             ["Astronaut"] = {"891621366", "891633237"},
             ["Bubbly"] = {"910004836", "910009958"},
@@ -135,7 +135,7 @@ pcall(function()
             ["Stylish"] = {"616136790", "616138447"},
             ["Zombie"] = {"616158929", "616160636"}
         },
-        ["Walk"] = {
+        Walk = {
             ["Astronaut"] = "891667138",
             ["Bubbly"] = "910034870",
             ["Cartoony"] = "742640026",
@@ -144,7 +144,7 @@ pcall(function()
             ["Stylish"] = "616146177",
             ["Zombie"] = "616168032"
         },
-        ["Run"] = {
+        Run = {
             ["Astronaut"] = "10921039308",
             ["Bubbly"] = "10921057244",
             ["Cartoony"] = "10921076136",
@@ -153,7 +153,7 @@ pcall(function()
             ["Stylish"] = "10921276116",
             ["Zombie"] = "616163682"
         },
-        ["Jump"] = {
+        Jump = {
             ["Astronaut"] = "891627522",
             ["Bubbly"] = "910016857",
             ["Cartoony"] = "742637942",
@@ -162,7 +162,7 @@ pcall(function()
             ["Stylish"] = "616139451",
             ["Zombie"] = "616161997"
         },
-        ["Fall"] = {
+        Fall = {
             ["Astronaut"] = "891617961",
             ["Bubbly"] = "910001910",
             ["Cartoony"] = "742637151",
@@ -173,24 +173,34 @@ pcall(function()
         }
     }
 
-    -- Create animation buttons
+    -- Create animation buttons - FIXED VERSION
     local buttons = {}
+    
     local function createAnimationButtons()
+        print("Creating animation buttons...") -- Debug
+        
         -- Clear existing buttons
         for _, btn in pairs(buttons) do
-            btn:Destroy()
+            if btn and btn.Parent then
+                btn:Destroy()
+            end
         end
         buttons = {}
 
         local yPosition = 0
-        local searchText = string.lower(searchBox.Text)
-
+        local searchText = string.lower(searchBox.Text or "")
+        
+        print("Animation types found:") -- Debug
         for animType, animList in pairs(Animations) do
+            print(" - " .. animType) -- Debug
+            
             for animName, animId in pairs(animList) do
                 local displayName = animName .. " - " .. animType
                 
                 -- Search filter
                 if searchText == "" or string.lower(displayName):find(searchText, 1, true) then
+                    print("Creating button: " .. displayName) -- Debug
+                    
                     local button = Instance.new("TextButton")
                     button.Text = displayName
                     button.Font = Enum.Font.Gotham
@@ -200,6 +210,7 @@ pcall(function()
                     button.Size = UDim2.new(0.95, 0, 0, 35)
                     button.Position = UDim2.new(0.025, 0, 0, yPosition)
                     button.Parent = scrollFrame
+                    button.AutoButtonColor = true
 
                     local btnCorner = Instance.new("UICorner")
                     btnCorner.CornerRadius = UDim.new(0, 6)
@@ -218,6 +229,7 @@ pcall(function()
         end
 
         scrollFrame.CanvasSize = UDim2.new(0, 0, 0, yPosition)
+        print("Total buttons created: " .. #buttons) -- Debug
     end
 
     -- Search functionality
@@ -268,10 +280,18 @@ pcall(function()
 
     function setAnimation(animationType, animationId)
         local char = Players.LocalPlayer.Character
-        if not char then return end
+        if not char then 
+            Notify("Error", "Character not found!", 3)
+            return 
+        end
 
         local animate = char:FindFirstChild("Animate")
-        if not animate then return end
+        if not animate then 
+            Notify("Error", "Animate script not found!", 3)
+            return 
+        end
+
+        print("Setting animation: " .. animationType) -- Debug
 
         -- Save animation
         lastAnimations[animationType] = animationId
@@ -294,6 +314,8 @@ pcall(function()
         pcall(function()
             writefile("GazeAnimations.json", HttpService:JSONEncode(lastAnimations))
         end)
+        
+        Notify("Success", animationType .. " animation applied!", 2)
     end
 
     -- Load saved animations
@@ -313,14 +335,14 @@ pcall(function()
 
     -- Handle character respawn
     Players.LocalPlayer.CharacterAdded:Connect(function(character)
-        task.wait(1) -- Wait for character to load
+        task.wait(2) -- Wait for character to load
         loadSavedAnimations()
     end)
 
-    -- Initial setup
+    -- Initial setup - FIXED: Call the function properly
     createAnimationButtons()
     loadSavedAnimations()
     Notify("Gaze Animations", "Script loaded successfully!\nDouble-click to minimize.", 5)
 
-    print("Gaze Animation GUI loaded successfully!")
+    print("Gaze Animation GUI loaded successfully! Buttons should be visible now.")
 end)
