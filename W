@@ -579,19 +579,21 @@ REFREHSTHEMAINBUTTONS()
 
 local normalSize = getScaledSize(0.3, 0.4)
 local normalPosition = UDim2.new(0.5, -normalSize.X.Offset / 2, 0.5, -normalSize.Y.Offset / 2)
-local smallerSize = getScaledSize(0.15, 0.2)
-local smallerPosition = UDim2.new(0.5, -smallerSize.X.Offset / 2, 0.5, -smallerSize.Y.Offset / 2)
+local smallerSize = getScaledSize(0.05, 0.05) -- Tiny square (5% of screen)
+local smallerPosition = UDim2.new(1, -smallerSize.X.Offset - 10, 1, -smallerSize.Y.Offset - 10) -- Bottom-right corner
 local isSmall = false
 local clickCount = 0
 
 local function handleDoubleClick()
     if isSmall then
+        -- Return to normal size
         frame.Size = normalSize
         frame.Position = normalPosition
         scrollFrame.Visible = true
         searchBar.Visible = true
         FLabel.Visible = false
     else
+        -- Minimize to tiny square
         frame.Size = smallerSize
         frame.Position = smallerPosition
         scrollFrame.Visible = false
