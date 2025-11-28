@@ -1,3 +1,5 @@
+[file name]: anim1(working).txt
+[file content begin]
 pcall(function()
 
 if not game.Players.LocalPlayer.Character or game.Players.LocalPlayer.Character:WaitForChild("Humanoid").RigType ~= Enum.HumanoidRigType.R15 then 
@@ -112,11 +114,12 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "DraggableGui"
 screenGui.Parent = core
 
+-- Larger maximized window (taller and slightly wider)
 local frame = Instance.new("TextButton")
 frame.Name = "GazeBro"
 frame.Text = ""
-frame.Size = getScaledSize(0.3, 0.4)
-frame.Position = UDim2.new(0.5, -getScaledSize(0.3,0.4).X.Offset/2, 0.5, -getScaledSize(0.3,0.4).Y.Offset/2)
+frame.Size = getScaledSize(0.35, 0.6)  -- Increased from (0.3, 0.4) to (0.35, 0.6)
+frame.Position = UDim2.new(0.5, -getScaledSize(0.35,0.6).X.Offset/2, 0.5, -getScaledSize(0.35,0.6).Y.Offset/2)
 frame.BackgroundColor3 = Color3.fromRGB(50,50,50)
 frame.BackgroundTransparency = 0.2
 frame.BorderSizePixel = 0  -- Remove border for rounded corners
@@ -206,8 +209,8 @@ searchBar.TextScaled = true
 searchBar.TextColor3 = Color3.fromRGB(200, 200, 200)
 searchBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 searchBar.BorderSizePixel = 0
-searchBar.Size = UDim2.new(0.9, 0, 0.2, 0)
-searchBar.Position = UDim2.new(0.05, 0, 0.10, 0)
+searchBar.Size = UDim2.new(0.9, 0, 0.15, 0)  -- Adjusted height for larger window
+searchBar.Position = UDim2.new(0.05, 0, 0.08, 0)  -- Adjusted position
 searchBar.ClearTextOnFocus = true
 
 -- Add rounded corners to search bar
@@ -219,14 +222,14 @@ searchBar.Parent = frame
 
 local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Name = "ScrollFrame"
-scrollFrame.Size = UDim2.new(0.9, 0, 0.7, 0)
-scrollFrame.Position = UDim2.new(0.05, 0, 0.3, 0)
+scrollFrame.Size = UDim2.new(0.9, 0, 0.8, 0)  -- Increased height for larger window
+scrollFrame.Position = UDim2.new(0.05, 0, 0.25, 0)  -- Adjusted position
 scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 scrollFrame.BorderSizePixel = 0
-scrollFrame.ScrollBarThickness = 0
+scrollFrame.ScrollBarThickness = 6  -- Added scrollbar for better navigation
 scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-scrollFrame.ScrollBarImageTransparency = 1
+scrollFrame.ScrollBarImageTransparency = 0.3
 
 -- Add rounded corners to scroll frame
 local scrollFrameCorner = Instance.new("UICorner")
@@ -250,8 +253,8 @@ local function createTheButton(text, callback)
     button.TextScaled = true
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
     button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    button.Size = UDim2.new(1, 0, 0, 40)
-    button.Position = UDim2.new(1, 0, 0, #buttons * 45)
+    button.Size = UDim2.new(0.95, 0, 0, 35)  -- Decreased width from 1 to 0.95, decreased height from 40 to 35
+    button.Position = UDim2.new(0.025, 0, 0, #buttons * 40)  -- Centered with margin
     button.BackgroundTransparency = 1
     button.BorderSizePixel = 0
 
@@ -268,14 +271,14 @@ local function createTheButton(text, callback)
 
     local tweenInfoLocal = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     local goal = {
-        Position = UDim2.new(0, 0, 0, #buttons * 45),
+        Position = UDim2.new(0.025, 0, 0, #buttons * 40),  -- Centered position
         BackgroundTransparency = 0
     }
     local tween = TweenService:Create(button, tweenInfoLocal, goal)
     tween:Play()
 
     table.insert(buttons, button)
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #buttons * 45)
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #buttons * 40)
 end
 
 searchBar:GetPropertyChangedSignal("Text"):Connect(function()
@@ -284,13 +287,13 @@ searchBar:GetPropertyChangedSignal("Text"):Connect(function()
     for _, button in ipairs(buttons) do
         if searchText == "" or button.Text:lower():find(searchText) then
             button.Visible = true
-            button:TweenPosition(UDim2.new(0, 0, 0, order * 45), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.12, true)
+            button:TweenPosition(UDim2.new(0.025, 0, 0, order * 40), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.12, true)
             order += 1
         else
             button.Visible = false
         end
     end
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 45)
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 40)
 end)
 
 OriginalAnimations = {
@@ -600,7 +603,7 @@ end
 
 REFREHSTHEMAINBUTTONS()
 
-local normalSize = getScaledSize(0.3, 0.4)
+local normalSize = getScaledSize(0.35, 0.6)  -- Larger maximized window
 local normalPosition = UDim2.new(0.5, -normalSize.X.Offset / 2, 0.5, -normalSize.Y.Offset / 2)
 local smallerSize = getScaledSize(0.1, 0.1) -- Larger minimized size (10% of screen)
 local smallerPosition = UDim2.new(1, -smallerSize.X.Offset - 10, 0, 10) -- Top-right corner
@@ -930,3 +933,4 @@ local lt = os.clock() - st
 Notify("Loaded", string.format("in %.2f seconds.", lt), 3)
 
 end)
+[file content end]
