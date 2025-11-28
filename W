@@ -112,21 +112,21 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "DraggableGui"
 screenGui.Parent = core
 
--- TALLER WINDOW SIZE - Changed from 0.4 to 0.6 height for more buttons
+-- TALLER WINDOW SIZE
 local frame = Instance.new("TextButton")
 frame.Name = "GazeBro"
 frame.Text = ""
-frame.Size = getScaledSize(0.3, 0.6) -- TALLER: 60% of screen height instead of 40%
+frame.Size = getScaledSize(0.3, 0.6)
 frame.Position = UDim2.new(0.5, -getScaledSize(0.3,0.6).X.Offset/2, 0.5, -getScaledSize(0.3,0.6).Y.Offset/2)
 frame.BackgroundColor3 = Color3.fromRGB(50,50,50)
 frame.BackgroundTransparency = 0.2
-frame.BorderSizePixel = 0  -- Remove border for rounded corners
+frame.BorderSizePixel = 0
 frame.Active = true
 frame.Draggable = true
 
 -- Add rounded corners to main frame
 local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 12)  -- Curved edges
+UICorner.CornerRadius = UDim.new(0, 12)
 UICorner.Parent = frame
 
 frame.Parent = screenGui
@@ -190,13 +190,21 @@ frame.InputBegan:Connect(function(input)
             task.wait()
         end
     end
-end)
+end
 
 frame.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         holding = false
     end
-end)
+end
+
+-- ORGANIZED TAB SYSTEM
+local tabContainer = Instance.new("Frame")
+tabContainer.Name = "TabContainer"
+tabContainer.Size = UDim2.new(0.9, 0, 0.08, 0)
+tabContainer.Position = UDim2.new(0.05, 0, 0.05, 0)
+tabContainer.BackgroundTransparency = 1
+tabContainer.Parent = frame
 
 local searchBar = Instance.new("TextBox")
 searchBar.Name = "SearchBar"
@@ -207,8 +215,8 @@ searchBar.TextScaled = true
 searchBar.TextColor3 = Color3.fromRGB(200, 200, 200)
 searchBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 searchBar.BorderSizePixel = 0
-searchBar.Size = UDim2.new(0.9, 0, 0.1, 0) -- Smaller search bar to make room for more buttons
-searchBar.Position = UDim2.new(0.05, 0, 0.05, 0) -- Adjusted position
+searchBar.Size = UDim2.new(0.9, 0, 0.06, 0)
+searchBar.Position = UDim2.new(0.05, 0, 0.14, 0)
 searchBar.ClearTextOnFocus = true
 
 -- Add rounded corners to search bar
@@ -218,17 +226,16 @@ searchBarCorner.Parent = searchBar
 
 searchBar.Parent = frame
 
--- LARGER SCROLL FRAME - More space for buttons
 local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Name = "ScrollFrame"
-scrollFrame.Size = UDim2.new(0.9, 0, 0.8, 0) -- TALLER: 80% of frame height instead of 70%
-scrollFrame.Position = UDim2.new(0.05, 0, 0.15, 0) -- Adjusted position
+scrollFrame.Size = UDim2.new(0.9, 0, 0.75, 0)
+scrollFrame.Position = UDim2.new(0.05, 0, 0.21, 0)
 scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 scrollFrame.BorderSizePixel = 0
-scrollFrame.ScrollBarThickness = 6 -- Added scrollbar for better navigation
+scrollFrame.ScrollBarThickness = 6
 scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-scrollFrame.ScrollBarImageTransparency = 0.3 -- Visible scrollbar
+scrollFrame.ScrollBarImageTransparency = 0.3
 
 -- Add rounded corners to scroll frame
 local scrollFrameCorner = Instance.new("UICorner")
@@ -252,8 +259,8 @@ local function createTheButton(text, callback)
     button.TextScaled = true
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
     button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    button.Size = UDim2.new(1, 0, 0, 35) -- Slightly smaller buttons to fit more
-    button.Position = UDim2.new(1, 0, 0, #buttons * 40) -- Adjusted spacing
+    button.Size = UDim2.new(1, 0, 0, 35)
+    button.Position = UDim2.new(1, 0, 0, #buttons * 40)
     button.BackgroundTransparency = 1
     button.BorderSizePixel = 0
 
@@ -280,20 +287,18 @@ local function createTheButton(text, callback)
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #buttons * 40)
 end
 
-searchBar:GetPropertyChangedSignal("Text"):Connect(function()
-    local searchText = searchBar.Text:lower()
-    local order = 0
-    for _, button in ipairs(buttons) do
-        if searchText == "" or button.Text:lower():find(searchText) then
-            button.Visible = true
-            button:TweenPosition(UDim2.new(0, 0, 0, order * 40), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.12, true)
-            order += 1
-        else
-            button.Visible = false
-        end
-    end
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 40)
-end)
+-- MASTER ANIMATION ORDER (Same order across all tabs)
+local MASTER_ANIMATION_ORDER = {
+    "Robot", "Zombie", "Astronaut", "Bold", "Bubbly", "Cartoony", 
+    "Confident", "Cowboy", "Elder", "Ghost", "Knight", "Levitation", 
+    "Mage", "Ninja", "OldSchool", "Patrol", "Pirate", "Popstar", 
+    "Princess", "R6", "R15 Reanimated", "Realistic", "Sneaky", "Soldier", 
+    "Stylish", "Stylized Female", "Superhero", "Toy", "Udzal", "Vampire", 
+    "Werewolf", "Adidas Community", "NFL", "Catwalk Glam", "No Boundaries (Walmart)", 
+    "Wicked (Popular)", "Default Retarget", "Sports (Adidas)", "2016 Animation (mm2)", 
+    "Drooling Zombie", "MrToilet", "Sway", "Very Long", "Gojo", "Geto", 
+    "Heavy Run (Udzal / Borock)"
+}
 
 OriginalAnimations = {
     ["Idle"] = {
@@ -620,6 +625,57 @@ FLabel.Position = UDim2.new(0, 0, 0, 0)
 FLabel.Visible = false
 FLabel.Parent = frame
 
+-- TAB MANAGEMENT
+local tabs = {}
+local currentTab = "All"
+
+local function createTab(name)
+    local tab = Instance.new("TextButton")
+    tab.Name = name .. "Tab"
+    tab.Text = name
+    tab.Font = Enum.Font.SourceSansBold
+    tab.TextScaled = true
+    tab.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    tab.Size = UDim2.new(0.2, 0, 1, 0)
+    tab.Position = UDim2.new(#tabs * 0.2, 0, 0, 0)
+    tab.BorderSizePixel = 0
+    
+    local tabCorner = Instance.new("UICorner")
+    tabCorner.CornerRadius = UDim.new(0, 6)
+    tabCorner.Parent = tab
+    
+    tab.Parent = tabContainer
+    table.insert(tabs, {button = tab, name = name})
+    
+    tab.MouseButton1Click:Connect(function()
+        currentTab = name
+        REFREHSTHEMAINBUTTONS()
+        
+        -- Update tab colors
+        for _, tabData in ipairs(tabs) do
+            if tabData.name == name then
+                tabData.button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            else
+                tabData.button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            end
+        end
+    end)
+end
+
+-- Create tabs
+createTab("All")
+createTab("Idle")
+createTab("Walk") 
+createTab("Run")
+createTab("Jump")
+createTab("Fall")
+createTab("Swim")
+createTab("Climb")
+
+-- Set first tab as active
+tabs[1].button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+
 local function REFREHSTHEMAINBUTTONS()
     for _, btn in ipairs(buttons) do
         if btn and btn.Parent then btn:Destroy() end
@@ -627,28 +683,41 @@ local function REFREHSTHEMAINBUTTONS()
     buttons = {}
     createdSet = {}
 
+    local searchText = searchBar.Text:lower()
+    
     local function addAnimButton(name, animType, id)
-        local buttonText = name .. " - " .. animType
-        createTheButton(buttonText, function()
-            pcall(function()
-                setAnimation(animType, id)
+        local buttonText = name
+        if currentTab == "All" then
+            buttonText = name .. " - " .. animType
+        end
+        
+        if searchText == "" or buttonText:lower():find(searchText) then
+            createTheButton(buttonText, function()
+                pcall(function()
+                    setAnimation(animType, id)
+                    Notify(animType, name, 1)
+                end)
             end)
-        end)
+        end
     end
 
-    local typeOrder = {"Idle", "Walk", "Run", "Jump", "Fall", "Swim", "SwimIdle", "Climb"}
-    local count = 0
-
-    for _, animType in ipairs(typeOrder) do
-        local anims = Animations[animType]
-        if anims then
-            for name, ids in pairs(anims) do
-                addAnimButton(name, animType, ids)
-                count += 1
-                if count >= 10 then
-                    count = 0
-                    task.wait()
-                end
+    if currentTab == "All" then
+        -- Show popular animations from all categories
+        local popularAnimations = {"Robot", "Zombie", "Astronaut", "Bold", "Bubbly", "Cartoony"}
+        for _, animName in ipairs(popularAnimations) do
+            if Animations["Idle"][animName] then
+                addAnimButton(animName, "Idle", Animations["Idle"][animName])
+            end
+            if Animations["Walk"][animName] then
+                addAnimButton(animName, "Walk", Animations["Walk"][animName])
+            end
+        end
+    else
+        -- Show organized animations for specific tab
+        for _, animName in ipairs(MASTER_ANIMATION_ORDER) do
+            local animData = Animations[currentTab] and Animations[currentTab][animName]
+            if animData then
+                addAnimButton(animName, currentTab, animData)
             end
         end
     end
@@ -656,28 +725,31 @@ end
 
 REFREHSTHEMAINBUTTONS()
 
--- UPDATED SIZES FOR TALLER WINDOW
-local normalSize = getScaledSize(0.3, 0.6) -- TALLER: 60% height
+searchBar:GetPropertyChangedSignal("Text"):Connect(function()
+    REFREHSTHEMAINBUTTONS()
+end)
+
+local normalSize = getScaledSize(0.3, 0.6)
 local normalPosition = UDim2.new(0.5, -normalSize.X.Offset / 2, 0.5, -normalSize.Y.Offset / 2)
-local smallerSize = getScaledSize(0.1, 0.1) -- Minimized size stays the same
-local smallerPosition = UDim2.new(1, -smallerSize.X.Offset - 10, 0, 10) -- Top-right corner
+local smallerSize = getScaledSize(0.1, 0.1)
+local smallerPosition = UDim2.new(1, -smallerSize.X.Offset - 10, 0, 10)
 local isSmall = false
 local clickCount = 0
 
 local function handleDoubleClick()
     if isSmall then
-        -- Return to normal size (TALLER)
         frame.Size = normalSize
         frame.Position = normalPosition
         scrollFrame.Visible = true
         searchBar.Visible = true
+        tabContainer.Visible = true
         FLabel.Visible = false
     else
-        -- Minimize to square in top-right corner
         frame.Size = smallerSize
         frame.Position = smallerPosition
         scrollFrame.Visible = false
         searchBar.Visible = false
+        tabContainer.Visible = false
         FLabel.Visible = true
     end
     isSmall = not isSmall
@@ -706,7 +778,7 @@ local function StopAnim()
     if Hum then
         for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
             if track then
-                track:Stop(0.1) -- Smooth stop
+                track:Stop(0.1)
             end
         end
     end
@@ -849,7 +921,6 @@ function setAnimation(animationType, animationId)
     
     local player = Players.LocalPlayer
     if not player.Character then 
-        -- Wait for character if it doesn't exist
         player.CharacterAdded:Wait()
         task.wait(0.5)
     end
@@ -859,16 +930,14 @@ function setAnimation(animationType, animationId)
     
     local Animate = Char:FindFirstChild("Animate")
     if not Animate then 
-        -- Wait for Animate script if it doesn't exist
         repeat task.wait() until Char:FindFirstChild("Animate") or not Char.Parent
         Animate = Char:FindFirstChild("Animate")
         if not Animate then return end
     end
 
     local success, err = pcall(function()
-        -- Stop current animations smoothly first
         StopAnim()
-        task.wait(0.05) -- Small delay to ensure clean stop
+        task.wait(0.05)
         
         if animationType == "Idle" then
             lastAnimations.Idle = animationId
@@ -907,10 +976,8 @@ function setAnimation(animationType, animationId)
         
         saveLastAnimations()
         
-        -- Force animation playback by triggering movement
         local humanoid = Char:FindFirstChildOfClass("Humanoid")
         if humanoid then
-            -- Small movement to trigger animations
             humanoid:Move(Vector3.new(0, 0, 0))
         end
     end)
@@ -937,16 +1004,14 @@ end
 
 -- Improved character added connection
 Players.LocalPlayer.CharacterAdded:Connect(function(character)
-    task.wait(1) -- Wait for character to fully load
+    task.wait(1)
     
     local hum = character:WaitForChild("Humanoid")
     local animate = character:WaitForChild("Animate", 10)
     if not animate then return end
 
-    -- Wait a bit more for everything to stabilize
     task.wait(0.5)
     
-    -- Reload saved animations
     if lastAnimations.Idle then 
         task.wait(0.1)
         setAnimation("Idle", lastAnimations.Idle) 
