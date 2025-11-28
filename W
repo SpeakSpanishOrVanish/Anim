@@ -252,8 +252,8 @@ local function createTheButton(text, callback)
     button.TextScaled = true
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
     button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    button.Size = UDim2.new(0.95, 0, 0, 35)  -- Decreased width from 1 to 0.95, decreased height from 40 to 35
-    button.Position = UDim2.new(0.025, 0, 0, #buttons * 40)  -- Centered with margin
+    button.Size = UDim2.new(1, -20, 0, 35)  -- Decreased width from 1 to 0.95, decreased height from 40 to 35
+    button.Position = UDim2.new(0, 0, 0, #buttons * 40)  -- Centered with margin
     button.BackgroundTransparency = 1
     button.BorderSizePixel = 0
 
@@ -277,7 +277,7 @@ local function createTheButton(text, callback)
     tween:Play()
 
     table.insert(buttons, button)
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #buttons * 40)
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, order * 40)
 end
 
 searchBar:GetPropertyChangedSignal("Text"):Connect(function()
