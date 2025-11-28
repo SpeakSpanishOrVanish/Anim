@@ -228,6 +228,7 @@ scrollFrame.ScrollBarThickness = 6  -- Added scrollbar for better navigation
 scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollFrame.ScrollBarImageTransparency = 0.3
+scrollFrame.ClipsDescendants = true
 
 -- Add rounded corners to scroll frame
 local scrollFrameCorner = Instance.new("UICorner")
