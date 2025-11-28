@@ -190,7 +190,7 @@ frame.InputBegan:Connect(function(input)
             task.wait()
         end
     end
-end)
+end
 
 frame.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -207,8 +207,8 @@ searchBar.TextScaled = true
 searchBar.TextColor3 = Color3.fromRGB(200, 200, 200)
 searchBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 searchBar.BorderSizePixel = 0
-searchBar.Size = UDim2.new(0.85, 0, 0.12, 0)  -- Adjusted to fit within window
-searchBar.Position = UDim2.new(0.075, 0, 0.08, 0)  -- Adjusted position
+searchBar.Size = UDim2.new(0.8, 0, 0.1, 0)  -- Equal margins on sides
+searchBar.Position = UDim2.new(0.1, 0, 0.05, 0)  -- Equal margins on all sides
 searchBar.ClearTextOnFocus = true
 
 -- Add rounded corners to search bar
@@ -220,8 +220,8 @@ searchBar.Parent = frame
 
 local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Name = "ScrollFrame"
-scrollFrame.Size = UDim2.new(0.85, 0, 0.75, 0)  -- Reduced size to fit within main window
-scrollFrame.Position = UDim2.new(0.075, 0, 0.22, 0)  -- Adjusted position to not overflow
+scrollFrame.Size = UDim2.new(0.8, 0, 0.8, 0)  -- Equal margins on all sides
+scrollFrame.Position = UDim2.new(0.1, 0, 0.17, 0)  -- Equal margins on all sides
 scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 scrollFrame.BorderSizePixel = 0
 scrollFrame.ScrollBarThickness = 6
@@ -251,8 +251,8 @@ local function createTheButton(text, callback)
     button.TextScaled = true
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
     button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    button.Size = UDim2.new(0.9, 0, 0, 35)  -- Reduced width to fit in scroll frame
-    button.Position = UDim2.new(0.05, 0, 0, #buttons * 40)  -- Centered within scroll frame
+    button.Size = UDim2.new(0.9, 0, 0, 35)  -- Equal margins on sides
+    button.Position = UDim2.new(0.05, 0, 0, #buttons * 40)  -- Equal margins on sides
     button.BackgroundTransparency = 1
     button.BorderSizePixel = 0
 
@@ -269,7 +269,7 @@ local function createTheButton(text, callback)
 
     local tweenInfoLocal = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     local goal = {
-        Position = UDim2.new(0.05, 0, 0, #buttons * 40),  -- Centered position
+        Position = UDim2.new(0.05, 0, 0, #buttons * 40),  -- Equal margins on sides
         BackgroundTransparency = 0
     }
     local tween = TweenService:Create(button, tweenInfoLocal, goal)
