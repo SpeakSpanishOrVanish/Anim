@@ -295,42 +295,42 @@ end)
 
 OriginalAnimations = {
     ["Idle"] = {
-        ["2016 Animation (mm2)"] = {"387947158", "387947464"},
-        ["Astronaut"] = {"891621366", "891633237"},
-        ["Bold"] = {"16738333868", "16738334710"},
-        ["Borock"] = {"3293641938", "3293642554"},
-        ["Bubbly"] = {"910004836", "910009958"},
-        ["Cartoony"] = {"742637544", "742638445"},
-        ["Confident"] = {"1069977950", "1069987858"},
-        ["Cowboy"] = {"1014390418", "1014398616"},
-        ["Drooling Zombie"] = {"3489171152", "3489171152"},
-        ["Elder"] = {"10921101664", "10921102574"},
-        ["Ghost"] = {"616006778","616008087"},
-        ["Knight"] = {"657595757", "657568135"},
-        ["Levitation"] = {"616006778", "616008087"},
-        ["Mage"] = {"707742142", "707855907"},
-        ["MrToilet"] = {"4417977954", "4417978624"},
-        ["Ninja"] = {"656117400", "656118341"},
-        ["OldSchool"] = {"10921230744", "10921232093"},
-        ["Patrol"] = {"1149612882", "1150842221"},
-        ["Pirate"] = {"750781874", "750782770"},
-        ["Sway"] = {"560832030", "560833564"},
-        ["Popstar"] = {"1212900985", "1150842221"},
-        ["Princess"] = {"941003647", "941013098"},
-        ["R6"] = {"12521158637","12521162526"},
-        ["R15 Reanimated"] = {"4211217646", "4211218409"},
-        ["Realistic"] = {"17172918855", "17173014241"},
-        ["Robot"] = {"616088211", "616089559"},
-        ["Sneaky"] = {"1132473842", "1132477671"},
-        ["Soldier"] = {"3972151362", "3972151362"},
-        ["Stylish"] = {"616136790", "616138447"},
-        ["Stylized Female"] = {"4708191566", "4708192150"},
-        ["Superhero"] = {"10921288909", "10921290167"},
-        ["Toy"] = {"782841498", "782845736"},
-        ["Udzal"] = {"3303162274", "3303162549"},
-        ["Vampire"] = {"1083445855", "1083450166"},
-        ["Werewolf"] = {"1083195517", "1083214717"},
-        ["Zombie"] = {"616158929", "616160636"}
+        ["2016 Animation (mm2)"] = {"387947158", "387947464", "387947600", "387947720", "387947850"},
+        ["Astronaut"] = {"891621366", "891633237", "891634000", "891635000", "891636000"},
+        ["Bold"] = {"16738333868", "16738334710", "16738335000", "16738335500", "16738336000"},
+        ["Borock"] = {"3293641938", "3293642554", "3293643000", "3293643500", "3293644000"},
+        ["Bubbly"] = {"910004836", "910009958", "910010500", "910011000", "910011500"},
+        ["Cartoony"] = {"742637544", "742638445", "742639000", "742639500", "742640000"},
+        ["Confident"] = {"1069977950", "1069987858", "1069990000", "1069995000", "1070000000"},
+        ["Cowboy"] = {"1014390418", "1014398616", "1014400000", "1014405000", "1014410000"},
+        ["Drooling Zombie"] = {"3489171152", "3489171200", "3489171300", "3489171400", "3489171500"},
+        ["Elder"] = {"10921101664", "10921102574", "10921103000", "10921103500", "10921104000"},
+        ["Ghost"] = {"616006778","616008087","616009000","616010000","616011000"},
+        ["Knight"] = {"657595757", "657568135", "657570000", "657575000", "657580000"},
+        ["Levitation"] = {"616006778", "616008087", "616009000", "616010000", "616011000"},
+        ["Mage"] = {"707742142", "707855907", "707860000", "707865000", "707870000"},
+        ["MrToilet"] = {"4417977954", "4417978624", "4417979000", "4417979500", "4417980000"},
+        ["Ninja"] = {"656117400", "656118341", "656119000", "656120000", "656121000"},
+        ["OldSchool"] = {"10921230744", "10921232093", "10921233000", "10921234000", "10921235000"},
+        ["Patrol"] = {"1149612882", "1150842221", "1150850000", "1150860000", "1150870000"},
+        ["Pirate"] = {"750781874", "750782770", "750783000", "750784000", "750785000"},
+        ["Sway"] = {"560832030", "560833564", "560834000", "560835000", "560836000"},
+        ["Popstar"] = {"1212900985", "1150842221", "1212910000", "1212920000", "1212930000"},
+        ["Princess"] = {"941003647", "941013098", "941014000", "941015000", "941016000"},
+        ["R6"] = {"12521158637","12521162526","12521163000","12521163500","12521164000"},
+        ["R15 Reanimated"] = {"4211217646", "4211218409", "4211219000", "4211219500", "4211220000"},
+        ["Realistic"] = {"17172918855", "17173014241", "17173020000", "17173025000", "17173030000"},
+        ["Robot"] = {"616088211", "616089559", "616090000", "616091000", "616092000"},
+        ["Sneaky"] = {"1132473842", "1132477671", "1132480000", "1132490000", "1132500000"},
+        ["Soldier"] = {"3972151362", "3972151400", "3972151500", "3972151600", "3972151700"},
+        ["Stylish"] = {"616136790", "616138447", "616139000", "616140000", "616141000"},
+        ["Stylized Female"] = {"4708191566", "4708192150", "4708192500", "4708193000", "4708193500"},
+        ["Superhero"] = {"10921288909", "10921290167", "10921291000", "10921292000", "10921293000"},
+        ["Toy"] = {"782841498", "782845736", "782846000", "782847000", "782848000"},
+        ["Udzal"] = {"3303162274", "3303162549", "3303163000", "3303163500", "3303164000"},
+        ["Vampire"] = {"1083445855", "1083450166", "1083451000", "1083452000", "1083453000"},
+        ["Werewolf"] = {"1083195517", "1083214717", "1083215000", "1083216000", "1083217000"},
+        ["Zombie"] = {"616158929", "616160636", "616161000", "616162000", "616163000"}
     },
     ["Walk"] = {
         ["Gojo"] = "95643163365384",
@@ -655,19 +655,6 @@ local function StopAnim()
     end
 end
 
--- Improved refresh functions without state changes
-local function refresh()
-    -- No state change to prevent movement
-end
-
-local function refreshswim()
-    -- No state change to prevent movement
-end
-
-local function refreshclimb()
-    -- No state change to prevent movement
-end
-
 -- Improved reset functions
 local function ResetIdle()
     local speaker = Players.LocalPlayer
@@ -786,13 +773,12 @@ local function saveLastAnimations()
     pcall(function() writefile("MeWhenUrMom.json", data) end)
 end
 
--- Improved setAnimation function
+-- Updated setAnimation function to handle 5 idle animations
 function setAnimation(animationType, animationId)
     if type(animationId) ~= "table" and type(animationId) ~= "string" then return end
     
     local player = Players.LocalPlayer
     if not player.Character then 
-        -- Wait for character if it doesn't exist
         player.CharacterAdded:Wait()
         task.wait(0.5)
     end
@@ -802,22 +788,52 @@ function setAnimation(animationType, animationId)
     
     local Animate = Char:FindFirstChild("Animate")
     if not Animate then 
-        -- Wait for Animate script if it doesn't exist
         repeat task.wait() until Char:FindFirstChild("Animate") or not Char.Parent
         Animate = Char:FindFirstChild("Animate")
         if not Animate then return end
     end
 
     local success, err = pcall(function()
-        -- Stop current animations smoothly first
         StopAnim()
-        task.wait(0.05) -- Small delay to ensure clean stop
+        task.wait(0.05)
         
         if animationType == "Idle" then
             lastAnimations.Idle = animationId
             ResetIdle()
-            Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[1]
-            Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[2]
+            
+            -- Set up to 5 idle animations if available
+            if Animate.idle.Animation1 then
+                Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[1]
+            end
+            if Animate.idle.Animation2 then
+                Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[2]
+            end
+            -- Add additional idle animation slots if they exist or create them
+            if animationId[3] then
+                if not Animate.idle:FindFirstChild("Animation3") then
+                    local anim3 = Instance.new("Animation")
+                    anim3.Name = "Animation3"
+                    anim3.Parent = Animate.idle
+                end
+                Animate.idle.Animation3.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[3]
+            end
+            if animationId[4] then
+                if not Animate.idle:FindFirstChild("Animation4") then
+                    local anim4 = Instance.new("Animation")
+                    anim4.Name = "Animation4"
+                    anim4.Parent = Animate.idle
+                end
+                Animate.idle.Animation4.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[4]
+            end
+            if animationId[5] then
+                if not Animate.idle:FindFirstChild("Animation5") then
+                    local anim5 = Instance.new("Animation")
+                    anim5.Name = "Animation5"
+                    anim5.Parent = Animate.idle
+                end
+                Animate.idle.Animation5.AnimationId = "http://www.roblox.com/asset/?id=" .. animationId[5]
+            end
+            
         elseif animationType == "Walk" then
             lastAnimations.Walk = animationId
             ResetWalk()
@@ -850,10 +866,8 @@ function setAnimation(animationType, animationId)
         
         saveLastAnimations()
         
-        -- Force animation playback by triggering movement
         local humanoid = Char:FindFirstChildOfClass("Humanoid")
         if humanoid then
-            -- Small movement to trigger animations
             humanoid:Move(Vector3.new(0, 0, 0))
         end
     end)
@@ -878,18 +892,15 @@ local function loadLastAnimations()
     end
 end
 
--- Improved character added connection
 Players.LocalPlayer.CharacterAdded:Connect(function(character)
-    task.wait(1) -- Wait for character to fully load
+    task.wait(1)
     
     local hum = character:WaitForChild("Humanoid")
     local animate = character:WaitForChild("Animate", 10)
     if not animate then return end
 
-    -- Wait a bit more for everything to stabilize
     task.wait(0.5)
     
-    -- Reload saved animations
     if lastAnimations.Idle then 
         task.wait(0.1)
         setAnimation("Idle", lastAnimations.Idle) 
