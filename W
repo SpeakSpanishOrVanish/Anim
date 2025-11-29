@@ -118,11 +118,22 @@ frame.Name = "GazeBro"
 frame.Text = ""
 frame.Size = getScaledSize(0.3, 0.6) -- TALLER: 60% of screen height instead of 40%
 frame.Position = UDim2.new(0.5, -getScaledSize(0.3,0.6).X.Offset/2, 0.5, -getScaledSize(0.3,0.6).Y.Offset/2)
-frame.BackgroundColor3 = Color3.fromRGB(50,50,50)
-frame.BackgroundTransparency = 0.2
+-- REMOVED GREY BACKGROUND - ADDED TRANSPARENCY
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+frame.BackgroundTransparency = 1 -- Completely transparent
 frame.BorderSizePixel = 0  -- Remove border for rounded corners
 frame.Active = true
 frame.Draggable = true
+
+-- ADD BACKGROUND IMAGE
+local backgroundImage = Instance.new("ImageLabel")
+backgroundImage.Name = "BackgroundImage"
+backgroundImage.Image = "rbxassetid://118164716578257" -- Your asset ID
+backgroundImage.Size = UDim2.new(1, 0, 1, 0)
+backgroundImage.Position = UDim2.new(0, 0, 0, 0)
+backgroundImage.BackgroundTransparency = 1
+backgroundImage.ScaleType = Enum.ScaleType.Crop
+backgroundImage.Parent = frame
 
 -- Add rounded corners to main frame
 local UICorner = Instance.new("UICorner")
@@ -216,7 +227,8 @@ searchBar.PlaceholderText = "Search..."
 searchBar.Font = Enum.Font.SourceSans
 searchBar.TextScaled = true
 searchBar.TextColor3 = Color3.fromRGB(200, 200, 200)
-searchBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+-- CHANGED TO SKY BLUE
+searchBar.BackgroundColor3 = Color3.fromRGB(135, 206, 235) -- Sky blue
 searchBar.BorderSizePixel = 0
 searchBar.Size = UDim2.new(0.9, 0, 0.1, 0) -- Smaller search bar to make room for more buttons
 searchBar.Position = UDim2.new(0.05, 0, 0.05, 0) -- Adjusted position
@@ -234,7 +246,8 @@ local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Name = "ScrollFrame"
 scrollFrame.Size = UDim2.new(0.9, 0, 0.8, 0) -- TALLER: 80% of frame height instead of 70%
 scrollFrame.Position = UDim2.new(0.05, 0, 0.15, 0) -- Adjusted position
-scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+-- CHANGED TO SKY BLUE
+scrollFrame.BackgroundColor3 = Color3.fromRGB(135, 206, 235) -- Sky blue
 scrollFrame.BorderSizePixel = 0
 scrollFrame.ScrollBarThickness = 6 -- Added scrollbar for better navigation
 scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
@@ -594,7 +607,8 @@ local function createButtonPool()
         button.Font = Enum.Font.SourceSansBold
         button.TextScaled = true
         button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        -- CHANGED TO SKY BLUE
+        button.BackgroundColor3 = Color3.fromRGB(135, 206, 235) -- Sky blue
         button.Size = UDim2.new(1, 0, 0, 35)
         button.Position = UDim2.new(0, 0, 0, (i-1) * 40)
         button.BackgroundTransparency = 0
@@ -1041,6 +1055,6 @@ end)
 task.delay(1, loadLastAnimations)
 
 local lt = os.clock() - st
-Notify("Optimized Load", string.format("in %.2f seconds.", lt), 3)
+Notify("Custom UI Loaded", string.format("in %.2f seconds.", lt), 3)
 
 end)
