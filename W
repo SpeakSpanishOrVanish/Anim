@@ -11,17 +11,6 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local camera = workspace.CurrentCamera
 
--- FURINA BLUE COLOR PALETTE
-local BlueColors = {
-    Periwinkle = Color3.fromRGB(204, 204, 255),    -- Light lavender-blue
-    NeonBlue = Color3.fromRGB(77, 77, 255),        -- Bright electric blue
-    Bluebonnet = Color3.fromRGB(112, 162, 255),    -- Medium sky blue
-    TwinBlue = Color3.fromRGB(158, 194, 255),      -- Soft powder blue
-    Smalt = Color3.fromRGB(0, 51, 153),            -- Deep navy blue
-    SavoyBlue = Color3.fromRGB(75, 108, 183),      -- Rich royal blue
-    ProcessBlue = Color3.fromRGB(0, 163, 224)      -- Vibrant cyan-blue
-}
-
 cloneref = cloneref or function(o) return o end
 local GazeGoGui = cloneref(game:GetService("CoreGui")) or game:GetService("CoreGui") or game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
@@ -42,26 +31,26 @@ function Notify(titletxt, text, time)
         local nw = sw / 5
 
         Main.Name = "MainFrame"
-        Main.BackgroundColor3 = BlueColors.SavoyBlue
-        Main.BackgroundTransparency = 0.1
+        Main.BackgroundColor3 = Color3.new(0.156863, 0.156863, 0.156863)
+        Main.BackgroundTransparency = 0.2
         Main.BorderSizePixel = 0
         Main.Size = UDim2.new(0, nw, 0, nh)
 
-        title.BackgroundColor3 = BlueColors.Smalt
-        title.BackgroundTransparency = 0.2
+        title.BackgroundColor3 = Color3.new(0, 0, 0)
+        title.BackgroundTransparency = 0.9
         title.Size = UDim2.new(1, 0, 0, nh / 2)
         title.Font = Enum.Font.GothamBold
         title.Text = titletxt
-        title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        title.TextColor3 = Color3.new(1, 1, 1)
         title.TextScaled = true
 
-        message.BackgroundColor3 = BlueColors.Bluebonnet
-        message.BackgroundTransparency = 0.3
+        message.BackgroundColor3 = Color3.new(0, 0, 0)
+        message.BackgroundTransparency = 1
         message.Position = UDim2.new(0, 0, 0, nh / 2)
         message.Size = UDim2.new(1, 0, 1, -nh / 2)
         message.Font = Enum.Font.Gotham
         message.Text = text
-        message.TextColor3 = Color3.fromRGB(255, 255, 255)
+        message.TextColor3 = Color3.new(1, 1, 1)
         message.TextScaled = true
 
         local offset = 50
@@ -123,31 +112,21 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "DraggableGui"
 screenGui.Parent = core
 
--- TALLER WINDOW SIZE
+-- TALLER WINDOW SIZE - Changed from 0.4 to 0.6 height for more buttons
 local frame = Instance.new("TextButton")
 frame.Name = "GazeBro"
 frame.Text = ""
-frame.Size = getScaledSize(0.3, 0.6)
+frame.Size = getScaledSize(0.3, 0.6) -- TALLER: 60% of screen height instead of 40%
 frame.Position = UDim2.new(0.5, -getScaledSize(0.3,0.6).X.Offset/2, 0.5, -getScaledSize(0.3,0.6).Y.Offset/2)
-frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-frame.BackgroundTransparency = 1 -- Completely transparent
-frame.BorderSizePixel = 0
+frame.BackgroundColor3 = Color3.fromRGB(50,50,50)
+frame.BackgroundTransparency = 0.2
+frame.BorderSizePixel = 0  -- Remove border for rounded corners
 frame.Active = true
 frame.Draggable = true
 
--- ADD FURINA BACKGROUND IMAGE
-local backgroundImage = Instance.new("ImageLabel")
-backgroundImage.Name = "BackgroundImage"
-backgroundImage.Image = "rbxassetid://118164716578257" -- Your Furina image
-backgroundImage.Size = UDim2.new(1, 0, 1, 0)
-backgroundImage.Position = UDim2.new(0, 0, 0, 0)
-backgroundImage.BackgroundTransparency = 1
-backgroundImage.ScaleType = Enum.ScaleType.Crop
-backgroundImage.Parent = frame
-
 -- Add rounded corners to main frame
 local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.CornerRadius = UDim.new(0, 12)  -- Curved edges
 UICorner.Parent = frame
 
 frame.Parent = screenGui
@@ -197,6 +176,7 @@ frame.InputBegan:Connect(function(input)
         startTime = os.clock()
         startPos = frame.AbsolutePosition
         
+        -- Use heartbeat instead of tight loop
         local connection
         connection = game:GetService("RunService").Heartbeat:Connect(function()
             if not holding then
@@ -227,7 +207,7 @@ frame.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         holding = false
     end
-end
+end)
 
 local searchBar = Instance.new("TextBox")
 searchBar.Name = "SearchBar"
@@ -235,13 +215,12 @@ searchBar.Text = ""
 searchBar.PlaceholderText = "Search..."
 searchBar.Font = Enum.Font.SourceSans
 searchBar.TextScaled = true
-searchBar.TextColor3 = BlueColors.Smalt
-searchBar.BackgroundColor3 = BlueColors.TwinBlue
+searchBar.TextColor3 = Color3.fromRGB(200, 200, 200)
+searchBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 searchBar.BorderSizePixel = 0
-searchBar.Size = UDim2.new(0.9, 0, 0.1, 0)
-searchBar.Position = UDim2.new(0.05, 0, 0.05, 0)
+searchBar.Size = UDim2.new(0.9, 0, 0.1, 0) -- Smaller search bar to make room for more buttons
+searchBar.Position = UDim2.new(0.05, 0, 0.05, 0) -- Adjusted position
 searchBar.ClearTextOnFocus = true
-searchBar.PlaceholderColor3 = BlueColors.Smalt
 
 -- Add rounded corners to search bar
 local searchBarCorner = Instance.new("UICorner")
@@ -250,20 +229,17 @@ searchBarCorner.Parent = searchBar
 
 searchBar.Parent = frame
 
--- SCROLL FRAME - MAKE TRANSPARENT TOO
+-- LARGER SCROLL FRAME - More space for buttons
 local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Name = "ScrollFrame"
-scrollFrame.Size = UDim2.new(0.9, 0, 0.8, 0)
-scrollFrame.Position = UDim2.new(0.05, 0, 0.15, 0)
--- MADE SCROLL FRAME TRANSPARENT
-scrollFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-scrollFrame.BackgroundTransparency = 1 -- Completely transparent
+scrollFrame.Size = UDim2.new(0.9, 0, 0.8, 0) -- TALLER: 80% of frame height instead of 70%
+scrollFrame.Position = UDim2.new(0.05, 0, 0.15, 0) -- Adjusted position
+scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 scrollFrame.BorderSizePixel = 0
-scrollFrame.ScrollBarThickness = 6
+scrollFrame.ScrollBarThickness = 6 -- Added scrollbar for better navigation
 scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-scrollFrame.ScrollBarImageColor3 = BlueColors.ProcessBlue
-scrollFrame.ScrollBarImageTransparency = 0.3
+scrollFrame.ScrollBarImageTransparency = 0.3 -- Visible scrollbar
 
 -- Add rounded corners to scroll frame
 local scrollFrameCorner = Instance.new("UICorner")
@@ -278,10 +254,10 @@ local createdSet = {}
 local animationsLoaded = false
 local Animations = {}
 local buttonPool = {}
-local visibleButtonCount = 15
+local visibleButtonCount = 15 -- Only show 15 buttons at once
 local currentScrollPosition = 0
 
--- OPTIMIZED ANIMATION DATABASE
+-- OPTIMIZED ANIMATION DATABASE (Load only when needed)
 local function loadAnimations()
     if animationsLoaded then return Animations end
     
@@ -589,6 +565,7 @@ local function loadAnimations()
         }
     }
 
+    -- Try to load from file, otherwise use original
     if isfile("GreyLikesToSmellUrFeet.json") then
         local success, data = pcall(function()
             return readfile("GreyLikesToSmellUrFeet.json")
@@ -609,27 +586,20 @@ local function loadAnimations()
     return Animations
 end
 
--- BUTTON POOL MANAGEMENT WITH TRANSPARENT BUTTONS
+-- BUTTON POOL MANAGEMENT
 local function createButtonPool()
     for i = 1, visibleButtonCount do
         local button = Instance.new("TextButton")
         button.Name = "PoolButton_" .. i
         button.Font = Enum.Font.SourceSansBold
         button.TextScaled = true
-        button.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text for visibility
-        -- TRANSPARENT BUTTONS WITH BLUE BORDER EFFECT
-        button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        button.BackgroundTransparency = 0.9 -- Mostly transparent
-        button.BorderSizePixel = 0
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         button.Size = UDim2.new(1, 0, 0, 35)
         button.Position = UDim2.new(0, 0, 0, (i-1) * 40)
+        button.BackgroundTransparency = 0
+        button.BorderSizePixel = 0
         button.Visible = false
-
-        -- Add blue border using UIStroke instead of background
-        local buttonStroke = Instance.new("UIStroke")
-        buttonStroke.Color = BlueColors.NeonBlue
-        buttonStroke.Thickness = 2
-        buttonStroke.Parent = button
 
         local buttonCorner = Instance.new("UICorner")
         buttonCorner.CornerRadius = UDim.new(0, 6)
@@ -669,6 +639,7 @@ end
 local function updateVisibleButtons()
     local searchText = searchBar.Text:lower()
     
+    -- Filter data if needed
     if searchText ~= "" then
         filteredAnimationData = {}
         for _, data in ipairs(allAnimationData) do
@@ -680,10 +651,12 @@ local function updateVisibleButtons()
         filteredAnimationData = allAnimationData
     end
     
+    -- Calculate visible range
     local scrollPosition = scrollFrame.CanvasPosition.Y
     local startIndex = math.floor(scrollPosition / 40) + 1
     local endIndex = math.min(startIndex + visibleButtonCount - 1, #filteredAnimationData)
     
+    -- Update button pool
     for i, button in ipairs(buttonPool) do
         local dataIndex = startIndex + i - 1
         
@@ -693,6 +666,7 @@ local function updateVisibleButtons()
             button.Position = UDim2.new(0, 0, 0, (dataIndex-1) * 40)
             button.Visible = true
             
+            -- Update callback
             button.MouseButton1Click:Connect(function()
                 pcall(function()
                     setAnimation(data.type, data.ids)
@@ -703,6 +677,7 @@ local function updateVisibleButtons()
         end
     end
     
+    -- Update canvas size
     scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #filteredAnimationData * 40)
 end
 
@@ -725,13 +700,16 @@ local function initializeGUI()
     populateAnimationData()
     updateVisibleButtons()
     
+    -- Load in background to prevent lag
     task.spawn(function()
+        -- Pre-load a few more animations if needed
         for i = 1, math.min(50, #allAnimationData) do
             task.wait()
         end
     end)
 end
 
+-- Initialize after a short delay to prevent initial lag
 task.delay(0.5, initializeGUI)
 
 local FLabel = Instance.new("TextLabel")
@@ -739,29 +717,31 @@ FLabel.Name = "FLabel"
 FLabel.Text = "F"
 FLabel.Font = Enum.Font.GothamBold
 FLabel.TextScaled = true
-FLabel.TextColor3 = BlueColors.NeonBlue
+FLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FLabel.BackgroundTransparency = 1
 FLabel.Size = UDim2.new(1, 0, 1, 0)
 FLabel.Position = UDim2.new(0, 0, 0, 0)
 FLabel.Visible = false
 FLabel.Parent = frame
 
--- WINDOW SIZING
-local normalSize = getScaledSize(0.3, 0.6)
+-- UPDATED SIZES FOR TALLER WINDOW
+local normalSize = getScaledSize(0.3, 0.6) -- TALLER: 60% height
 local normalPosition = UDim2.new(0.5, -normalSize.X.Offset / 2, 0.5, -normalSize.Y.Offset / 2)
-local smallerSize = getScaledSize(0.1, 0.1)
-local smallerPosition = UDim2.new(1, -smallerSize.X.Offset - 10, 0, 10)
+local smallerSize = getScaledSize(0.1, 0.1) -- Minimized size stays the same
+local smallerPosition = UDim2.new(1, -smallerSize.X.Offset - 10, 0, 10) -- Top-right corner
 local isSmall = false
 local clickCount = 0
 
 local function handleDoubleClick()
     if isSmall then
+        -- Return to normal size (TALLER)
         frame.Size = normalSize
         frame.Position = normalPosition
         scrollFrame.Visible = true
         searchBar.Visible = true
         FLabel.Visible = false
     else
+        -- Minimize to square in top-right corner
         frame.Size = smallerSize
         frame.Position = smallerPosition
         scrollFrame.Visible = false
@@ -787,9 +767,280 @@ scrollFrame:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
     updateVisibleButtons()
 end)
 
--- ... (rest of the animation functions remain exactly the same as before)
+local lastAnimations = {}
+
+-- Improved animation handling
+local function StopAnim()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if Hum then
+        for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+            if track then
+                track:Stop(0.1) -- Smooth stop
+            end
+        end
+    end
+end
+
+-- Improved reset functions
+local function ResetIdle()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and (track.Name == "idle" or track.Name == "IdleAnimation") then
+            track:Stop(0.1)
+        end
+    end
+end
+
+local function ResetWalk()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "walk" then
+            track:Stop(0.1)
+        end
+    end
+end
+
+local function ResetRun()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "run" then
+            track:Stop(0.1)
+        end
+    end
+end
+
+local function ResetJump()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "jump" then
+            track:Stop(0.1)
+        end
+    end
+end
+
+local function ResetFall()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "fall" then
+            track:Stop(0.1)
+        end
+    end
+end
+
+local function ResetSwim()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "swim" then
+            track:Stop(0.1)
+        end
+    end
+end
+
+local function ResetSwimIdle()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "swimidle" then
+            track:Stop(0.1)
+        end
+    end
+end
+
+local function ResetClimb()
+    local speaker = Players.LocalPlayer
+    local Char = speaker.Character
+    if not Char then return end
+    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+    if not Hum then return end
+    
+    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
+        if track and track.Name == "climb" then
+            track:Stop(0.1)
+        end
+    end
+end
+
+local function saveLastAnimations()
+    local data = HttpService:JSONEncode(lastAnimations)
+    pcall(function() writefile("MeWhenUrMom.json", data) end)
+end
+
+-- BATCHED ANIMATION SYSTEM
+local pendingAnimations = {}
+local animationApplyDebounce
+
+local function applyPendingAnimations()
+    if animationApplyDebounce then return end
+    
+    animationApplyDebounce = true
+    task.delay(0.1, function()
+        local player = Players.LocalPlayer
+        if not player.Character then 
+            animationApplyDebounce = false
+            return
+        end
+        
+        local Char = player.Character
+        local Animate = Char:FindFirstChild("Animate")
+        if not Animate then 
+            animationApplyDebounce = false
+            return
+        end
+
+        pcall(function()
+            StopAnim()
+            task.wait(0.05)
+            
+            for animType, animId in pairs(pendingAnimations) do
+                lastAnimations[animType] = animId
+                
+                if animType == "Idle" then
+                    ResetIdle()
+                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. animId[1]
+                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. animId[2]
+                elseif animType == "Walk" then
+                    ResetWalk()
+                    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
+                elseif animType == "Run" then
+                    ResetRun()
+                    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
+                elseif animType == "Jump" then
+                    ResetJump()
+                    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
+                elseif animType == "Fall" then
+                    ResetFall()
+                    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
+                elseif animType == "Swim" and Animate:FindFirstChild("swim") then
+                    ResetSwim()
+                    Animate.swim.Swim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
+                elseif animType == "SwimIdle" and Animate:FindFirstChild("swimidle") then
+                    ResetSwimIdle()
+                    Animate.swimidle.SwimIdle.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
+                elseif animType == "Climb" then
+                    ResetClimb()
+                    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
+                end
+            end
+            
+            pendingAnimations = {}
+            saveLastAnimations()
+            
+            local humanoid = Char:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:Move(Vector3.new(0, 0, 0))
+            end
+        end)
+        
+        animationApplyDebounce = false
+    end)
+end
+
+-- Improved setAnimation function
+function setAnimation(animationType, animationId)
+    if type(animationId) ~= "table" and type(animationId) ~= "string" then return end
+    
+    pendingAnimations[animationType] = animationId
+    applyPendingAnimations()
+end
+
+local function loadLastAnimations()
+    if isfile("MeWhenUrMom.json") then
+        local success, data = pcall(function()
+            return readfile("MeWhenUrMom.json")
+        end)
+        if success then
+            local lastAnimationsData = HttpService:JSONDecode(data)
+            if lastAnimationsData.Idle then setAnimation("Idle", lastAnimationsData.Idle) end
+            if lastAnimationsData.Walk then setAnimation("Walk", lastAnimationsData.Walk) end
+            if lastAnimationsData.Run then setAnimation("Run", lastAnimationsData.Run) end
+            if lastAnimationsData.Jump then setAnimation("Jump", lastAnimationsData.Jump) end
+            if lastAnimationsData.Fall then setAnimation("Fall", lastAnimationsData.Fall) end
+            if lastAnimationsData.Climb then setAnimation("Climb", lastAnimationsData.Climb) end
+            if lastAnimationsData.Swim then setAnimation("Swim", lastAnimationsData.Swim) end
+            if lastAnimationsData.SwimIdle then setAnimation("SwimIdle", lastAnimationsData.SwimIdle) end
+        end
+    end
+end
+
+-- OPTIMIZED CHARACTER EVENT HANDLING
+local characterLoadDebounce
+Players.LocalPlayer.CharacterAdded:Connect(function(character)
+    if characterLoadDebounce then return end
+    characterLoadDebounce = true
+    
+    task.wait(1) -- Wait for character to fully load
+    
+    local hum = character:WaitForChild("Humanoid")
+    local animate = character:WaitForChild("Animate", 10)
+    if not animate then 
+        characterLoadDebounce = false
+        return 
+    end
+
+    -- Wait a bit more for everything to stabilize
+    task.wait(0.5)
+    
+    -- Batch load saved animations with delays
+    local function applyWithDelay(animType, animData)
+        if animData then
+            task.wait(0.15)
+            setAnimation(animType, animData)
+        end
+    end
+    
+    if lastAnimations.Idle then applyWithDelay("Idle", lastAnimations.Idle) end
+    if lastAnimations.Walk then applyWithDelay("Walk", lastAnimations.Walk) end
+    if lastAnimations.Run then applyWithDelay("Run", lastAnimations.Run) end
+    if lastAnimations.Jump then applyWithDelay("Jump", lastAnimations.Jump) end
+    if lastAnimations.Fall then applyWithDelay("Fall", lastAnimations.Fall) end
+    if lastAnimations.Climb then applyWithDelay("Climb", lastAnimations.Climb) end
+    if lastAnimations.Swim then applyWithDelay("Swim", lastAnimations.Swim) end
+    if lastAnimations.SwimIdle then applyWithDelay("SwimIdle", lastAnimations.SwimIdle) end
+    
+    characterLoadDebounce = false
+end)
+
+-- Load animations after GUI is ready
+task.delay(1, loadLastAnimations)
 
 local lt = os.clock() - st
-Notify("Transparent Buttons Loaded", string.format("in %.2f seconds.", lt), 3)
+Notify("Optimized Load", string.format("in %.2f seconds.", lt), 3)
 
 end)
