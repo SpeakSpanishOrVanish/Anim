@@ -1,3 +1,5 @@
+[file name]: anim2_organized_fixed.txt
+[file content begin]
 pcall(function()
 
 if not game.Players.LocalPlayer.Character or game.Players.LocalPlayer.Character:WaitForChild("Humanoid").RigType ~= Enum.HumanoidRigType.R15 then 
@@ -190,13 +192,13 @@ frame.InputBegan:Connect(function(input)
             task.wait()
         end
     end
-end
+end)
 
 frame.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         holding = false
     end
-end
+end)
 
 -- ORGANIZED TAB SYSTEM
 local tabContainer = Instance.new("Frame")
@@ -300,7 +302,7 @@ local MASTER_ANIMATION_ORDER = {
     "Heavy Run (Udzal / Borock)"
 }
 
-OriginalAnimations = {
+local OriginalAnimations = {
     ["Idle"] = {
         ["2016 Animation (mm2)"] = {"387947158", "387947464"},
         ["Astronaut"] = {"891621366", "891633237"},
@@ -769,7 +771,6 @@ end)
 
 local lastAnimations = {}
 
--- Improved animation handling
 local function StopAnim()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
@@ -784,20 +785,6 @@ local function StopAnim()
     end
 end
 
--- Improved refresh functions without state changes
-local function refresh()
-    -- No state change to prevent movement
-end
-
-local function refreshswim()
-    -- No state change to prevent movement
-end
-
-local function refreshclimb()
-    -- No state change to prevent movement
-end
-
--- Improved reset functions
 local function ResetIdle()
     local speaker = Players.LocalPlayer
     local Char = speaker.Character
@@ -915,7 +902,6 @@ local function saveLastAnimations()
     pcall(function() writefile("MeWhenUrMom.json", data) end)
 end
 
--- Improved setAnimation function
 function setAnimation(animationType, animationId)
     if type(animationId) ~= "table" and type(animationId) ~= "string" then return end
     
@@ -1002,7 +988,6 @@ local function loadLastAnimations()
     end
 end
 
--- Improved character added connection
 Players.LocalPlayer.CharacterAdded:Connect(function(character)
     task.wait(1)
     
@@ -1012,38 +997,14 @@ Players.LocalPlayer.CharacterAdded:Connect(function(character)
 
     task.wait(0.5)
     
-    if lastAnimations.Idle then 
-        task.wait(0.1)
-        setAnimation("Idle", lastAnimations.Idle) 
-    end
-    if lastAnimations.Walk then 
-        task.wait(0.1)
-        setAnimation("Walk", lastAnimations.Walk) 
-    end
-    if lastAnimations.Run then 
-        task.wait(0.1)
-        setAnimation("Run", lastAnimations.Run) 
-    end
-    if lastAnimations.Jump then 
-        task.wait(0.1)
-        setAnimation("Jump", lastAnimations.Jump) 
-    end
-    if lastAnimations.Fall then 
-        task.wait(0.1)
-        setAnimation("Fall", lastAnimations.Fall) 
-    end
-    if lastAnimations.Climb then 
-        task.wait(0.1)
-        setAnimation("Climb", lastAnimations.Climb) 
-    end
-    if lastAnimations.Swim then 
-        task.wait(0.1)
-        setAnimation("Swim", lastAnimations.Swim) 
-    end
-    if lastAnimations.SwimIdle then 
-        task.wait(0.1)
-        setAnimation("SwimIdle", lastAnimations.SwimIdle) 
-    end
+    if lastAnimations.Idle then setAnimation("Idle", lastAnimations.Idle) end
+    if lastAnimations.Walk then setAnimation("Walk", lastAnimations.Walk) end
+    if lastAnimations.Run then setAnimation("Run", lastAnimations.Run) end
+    if lastAnimations.Jump then setAnimation("Jump", lastAnimations.Jump) end
+    if lastAnimations.Fall then setAnimation("Fall", lastAnimations.Fall) end
+    if lastAnimations.Climb then setAnimation("Climb", lastAnimations.Climb) end
+    if lastAnimations.Swim then setAnimation("Swim", lastAnimations.Swim) end
+    if lastAnimations.SwimIdle then setAnimation("SwimIdle", lastAnimations.SwimIdle) end
 end)
 
 loadLastAnimations()
@@ -1052,3 +1013,4 @@ local lt = os.clock() - st
 Notify("Loaded", string.format("in %.2f seconds.", lt), 3)
 
 end)
+[file content end]
