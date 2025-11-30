@@ -257,11 +257,11 @@ local buttonPool = {}
 local visibleButtonCount = 15 -- Only show 15 buttons at once
 local currentScrollPosition = 0
 
--- FIXED: REMOVED FILE SYSTEM DEPENDENCIES
+-- OPTIMIZED ANIMATION DATABASE (Load only when needed)
 local function loadAnimations()
     if animationsLoaded then return Animations end
     
-    Animations = {
+    local OriginalAnimations = {
         ["Idle"] = {
             ["2016 Animation (mm2)"] = {"387947158", "387947464"},
             ["Astronaut"] = {"891621366", "891633237"},
@@ -564,6 +564,23 @@ local function loadAnimations()
             ["Zombie"] = "616156119"
         }
     }
+
+    -- Try to load from file, otherwise use original
+    if isfile("GreyLikesToSmellUrFeet.json") then
+        local success, data = pcall(function()
+            return readfile("GreyLikesToSmellUrFeet.json")
+        end)
+        if success then
+            Animations = HttpService:JSONDecode(data)
+        else
+            Animations = OriginalAnimations
+        end
+    else
+        pcall(function()
+            writefile("GreyLikesToSmellUrFeet.json", HttpService:JSONEncode(OriginalAnimations))
+        end)
+        Animations = OriginalAnimations
+    end
     
     animationsLoaded = true
     return Animations
@@ -619,7 +636,6 @@ local function populateAnimationData()
     filteredAnimationData = allAnimationData
 end
 
--- FIXED: Store animation data directly on buttons to prevent wrong assignments
 local function updateVisibleButtons()
     local searchText = searchBar.Text:lower()
     
@@ -650,23 +666,19 @@ local function updateVisibleButtons()
             button.Position = UDim2.new(0, 0, 0, (dataIndex-1) * 40)
             button.Visible = true
             
-            -- FIX: Store the animation data directly in the button to avoid index issues
-            button.AnimationData = data
-            
-            -- FIX: Only create the click connection once to prevent multiple connections
-            if not button.ClickConnection then
-                button.ClickConnection = button.MouseButton1Click:Connect(function()
-                    pcall(function()
-                        if button.AnimationData then
-                            setAnimation(button.AnimationData.type, button.AnimationData.ids)
-                            Notify("Animation Applied", button.AnimationData.name, 2)
-                        end
-                    end)
-                end)
-            end
+            -- Update callback
+if button.__conn then
+    button.__conn:Disconnect()
+end
+
+button.__conn = button.MouseButton1Click:Connect(function()
+    pcall(function()
+        setAnimation(data.type, data.ids)
+    end)
+end)
+
         else
             button.Visible = false
-            button.AnimationData = nil
         end
     end
     
@@ -693,7 +705,13 @@ local function initializeGUI()
     populateAnimationData()
     updateVisibleButtons()
     
-    Notify("Animations Loaded", #allAnimationData .. " animations available", 3)
+    -- Load in background to prevent lag
+    task.spawn(function()
+        -- Pre-load a few more animations if needed
+        for i = 1, math.min(50, #allAnimationData) do
+            task.wait()
+        end
+    end)
 end
 
 -- Initialize after a short delay to prevent initial lag
@@ -884,9 +902,9 @@ local function ResetClimb()
     end
 end
 
--- FIXED: REMOVED FILE SAVING
 local function saveLastAnimations()
-    -- File saving removed for compatibility
+    local data = HttpService:JSONEncode(lastAnimations)
+    pcall(function() writefile("MeWhenUrMom.json", data) end)
 end
 
 -- BATCHED ANIMATION SYSTEM
@@ -967,9 +985,23 @@ function setAnimation(animationType, animationId)
     applyPendingAnimations()
 end
 
--- FIXED: REMOVED FILE LOADING
 local function loadLastAnimations()
-    -- File loading removed for compatibility
+    if isfile("MeWhenUrMom.json") then
+        local success, data = pcall(function()
+            return readfile("MeWhenUrMom.json")
+        end)
+        if success then
+            local lastAnimationsData = HttpService:JSONDecode(data)
+            if lastAnimationsData.Idle then setAnimation("Idle", lastAnimationsData.Idle) end
+            if lastAnimationsData.Walk then setAnimation("Walk", lastAnimationsData.Walk) end
+            if lastAnimationsData.Run then setAnimation("Run", lastAnimationsData.Run) end
+            if lastAnimationsData.Jump then setAnimation("Jump", lastAnimationsData.Jump) end
+            if lastAnimationsData.Fall then setAnimation("Fall", lastAnimationsData.Fall) end
+            if lastAnimationsData.Climb then setAnimation("Climb", lastAnimationsData.Climb) end
+            if lastAnimationsData.Swim then setAnimation("Swim", lastAnimationsData.Swim) end
+            if lastAnimationsData.SwimIdle then setAnimation("SwimIdle", lastAnimationsData.SwimIdle) end
+        end
+    end
 end
 
 -- OPTIMIZED CHARACTER EVENT HANDLING
@@ -1010,7 +1042,10 @@ Players.LocalPlayer.CharacterAdded:Connect(function(character)
     characterLoadDebounce = false
 end)
 
+-- Load animations after GUI is ready
+task.delay(1, loadLastAnimations)
+
 local lt = os.clock() - st
-Notify("Animation GUI Loaded", string.format("Ready in %.2f seconds", lt), 3)
+Notify("Optimized Load", string.format("in %.2f seconds.", lt), 3)
 
 end)
