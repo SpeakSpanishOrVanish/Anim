@@ -1,4 +1,4 @@
-pcall(function()
+[file namepcall(function()
 
 if not game.Players.LocalPlayer.Character or game.Players.LocalPlayer.Character:WaitForChild("Humanoid").RigType ~= Enum.HumanoidRigType.R15 then 
     game.StarterGui:SetCore("SendNotification", {Title = "R6", Text = "You're on R6, bro. Change to R15!", Duration = 60})
@@ -636,6 +636,7 @@ local function populateAnimationData()
     filteredAnimationData = allAnimationData
 end
 
+-- FIXED: Store animation data directly on buttons to prevent wrong assignments
 local function updateVisibleButtons()
     local searchText = searchBar.Text:lower()
     
@@ -666,14 +667,22 @@ local function updateVisibleButtons()
             button.Position = UDim2.new(0, 0, 0, (dataIndex-1) * 40)
             button.Visible = true
             
-            -- Update callback
-            button.MouseButton1Click:Connect(function()
-                pcall(function()
-                    setAnimation(data.type, data.ids)
+            -- FIX: Store the animation data directly in the button to avoid index issues
+            button.AnimationData = data
+            
+            -- FIX: Only create the click connection once to prevent multiple connections
+            if not button.ClickConnection then
+                button.ClickConnection = button.MouseButton1Click:Connect(function()
+                    pcall(function()
+                        if button.AnimationData then
+                            setAnimation(button.AnimationData.type, button.AnimationData.ids)
+                        end
+                    end)
                 end)
-            end)
+            end
         else
             button.Visible = false
+            button.AnimationData = nil
         end
     end
     
