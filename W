@@ -779,6 +779,27 @@ end)
 
 local lastAnimations = {}
 
+-- Load saved animations immediately and cache them
+local function loadSavedAnimationsToCache()
+    if isfile("MeWhenUrMom.json") then
+        local success, data = pcall(function()
+            return readfile("MeWhenUrMom.json")
+        end)
+        if success then
+            local loadedData = HttpService:JSONDecode(data)
+            -- Deep copy to cache
+            for animType, animId in pairs(loadedData) do
+                lastAnimations[animType] = animId
+            end
+            return true
+        end
+    end
+    return false
+end
+
+-- Load animations to cache on script start
+loadSavedAnimationsToCache()
+
 -- Improved animation handling
 local function StopAnim()
     local speaker = Players.LocalPlayer
@@ -909,7 +930,9 @@ end
 
 local function saveLastAnimations()
     local data = HttpService:JSONEncode(lastAnimations)
-    pcall(function() writefile("MeWhenUrMom.json", data) end)
+    pcall(function() 
+        writefile("MeWhenUrMom.json", data) 
+    end)
 end
 
 -- BATCHED ANIMATION SYSTEM
@@ -990,65 +1013,82 @@ function setAnimation(animationType, animationId)
     applyPendingAnimations()
 end
 
-local function loadLastAnimations()
-    if isfile("MeWhenUrMom.json") then
-        local success, data = pcall(function()
-            return readfile("MeWhenUrMom.json")
-        end)
-        if success then
-            local lastAnimationsData = HttpService:JSONDecode(data)
-            if lastAnimationsData.Idle then setAnimation("Idle", lastAnimationsData.Idle) end
-            if lastAnimationsData.Walk then setAnimation("Walk", lastAnimationsData.Walk) end
-            if lastAnimationsData.Run then setAnimation("Run", lastAnimationsData.Run) end
-            if lastAnimationsData.Jump then setAnimation("Jump", lastAnimationsData.Jump) end
-            if lastAnimationsData.Fall then setAnimation("Fall", lastAnimationsData.Fall) end
-            if lastAnimationsData.Climb then setAnimation("Climb", lastAnimationsData.Climb) end
-            if lastAnimationsData.Swim then setAnimation("Swim", lastAnimationsData.Swim) end
-            if lastAnimationsData.SwimIdle then setAnimation("SwimIdle", lastAnimationsData.SwimIdle) end
+-- Apply animations on character load
+local function applyCachedAnimations(character)
+    local hum = character:WaitForChild("Humanoid")
+    local animate = character:WaitForChild("Animate", 5)
+    if not animate then return end
+    
+    task.wait(0.5) -- Wait for character to fully initialize
+    
+    -- Apply cached animations with small delays between each
+    local applyOrder = {"Idle", "Walk", "Run", "Jump", "Fall", "Climb", "Swim", "SwimIdle"}
+    
+    for _, animType in ipairs(applyOrder) do
+        if lastAnimations[animType] then
+            task.wait(0.1) -- Small delay to prevent race conditions
+            setAnimation(animType, lastAnimations[animType])
         end
     end
 end
 
 -- OPTIMIZED CHARACTER EVENT HANDLING
-local characterLoadDebounce
-Players.LocalPlayer.CharacterAdded:Connect(function(character)
-    if characterLoadDebounce then return end
-    characterLoadDebounce = true
-    
-    task.wait(1) -- Wait for character to fully load
-    
-    local hum = character:WaitForChild("Humanoid")
-    local animate = character:WaitForChild("Animate", 10)
-    if not animate then 
-        characterLoadDebounce = false
-        return 
+local characterConnection
+characterConnection = Players.LocalPlayer.CharacterAdded:Connect(function(character)
+    -- Disconnect old connection to prevent multiple handlers
+    if characterConnection then
+        characterConnection:Disconnect()
+        characterConnection = nil
     end
-
-    -- Wait a bit more for everything to stabilize
-    task.wait(0.5)
     
-    -- Batch load saved animations with delays
-    local function applyWithDelay(animType, animData)
-        if animData then
-            task.wait(0.15)
-            setAnimation(animType, animData)
+    -- Apply animations with retry logic
+    local retryCount = 0
+    local maxRetries = 3
+    
+    local function tryApplyAnimations()
+        retryCount = retryCount + 1
+        
+        if retryCount > maxRetries then
+            return
+        end
+        
+        local success, err = pcall(function()
+            applyCachedAnimations(character)
+        end)
+        
+        if not success and retryCount <= maxRetries then
+            task.wait(1) -- Wait before retry
+            tryApplyAnimations()
         end
     end
     
-    if lastAnimations.Idle then applyWithDelay("Idle", lastAnimations.Idle) end
-    if lastAnimations.Walk then applyWithDelay("Walk", lastAnimations.Walk) end
-    if lastAnimations.Run then applyWithDelay("Run", lastAnimations.Run) end
-    if lastAnimations.Jump then applyWithDelay("Jump", lastAnimations.Jump) end
-    if lastAnimations.Fall then applyWithDelay("Fall", lastAnimations.Fall) end
-    if lastAnimations.Climb then applyWithDelay("Climb", lastAnimations.Climb) end
-    if lastAnimations.Swim then applyWithDelay("Swim", lastAnimations.Swim) end
-    if lastAnimations.SwimIdle then applyWithDelay("SwimIdle", lastAnimations.SwimIdle) end
+    tryApplyAnimations()
     
-    characterLoadDebounce = false
+    -- Reconnect for future character respawns
+    characterConnection = Players.LocalPlayer.CharacterAdded:Connect(function(newChar)
+        task.wait(0.1) -- Small delay
+        local newRetryCount = 0
+        local function retryNewChar()
+            newRetryCount = newRetryCount + 1
+            if newRetryCount <= maxRetries then
+                local success = pcall(function()
+                    applyCachedAnimations(newChar)
+                end)
+                if not success and newRetryCount < maxRetries then
+                    task.wait(1)
+                    retryNewChar()
+                end
+            end
+        end
+        retryNewChar()
+    end)
 end)
 
--- Load animations after GUI is ready
-task.delay(1, loadLastAnimations)
+-- Apply animations to current character if exists
+if Players.LocalPlayer.Character then
+    task.wait(1) -- Wait for everything to load
+    applyCachedAnimations(Players.LocalPlayer.Character)
+end
 
 local lt = os.clock() - st
 Notify("Optimized Load", string.format("in %.2f seconds.", lt), 3)
