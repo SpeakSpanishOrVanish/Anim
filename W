@@ -131,9 +131,11 @@ UICorner.Parent = frame
 
 frame.Parent = screenGui
 
+-- FIXED: Optimized fade and hold detection to prevent lag
 local holding = false
 local startTime = 0
 local startPos
+local heartbeatConnection = nil  -- Track connection to prevent memory leaks
 
 local function fadeOut()
     local t = frame.BackgroundTransparency
@@ -170,23 +172,31 @@ local function movedFar()
     return dx >= 20 or dy >= 20
 end
 
+-- FIXED: Optimized heartbeat connection to prevent lag
 frame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         holding = true
         startTime = os.clock()
         startPos = frame.AbsolutePosition
         
-        -- Use heartbeat instead of tight loop
-        local connection
-        connection = game:GetService("RunService").Heartbeat:Connect(function()
+        -- Disconnect previous connection if exists to prevent memory leaks
+        if heartbeatConnection then
+            heartbeatConnection:Disconnect()
+            heartbeatConnection = nil
+        end
+        
+        -- Create single connection instead of multiple
+        heartbeatConnection = game:GetService("RunService").Heartbeat:Connect(function()
             if not holding then
-                connection:Disconnect()
+                heartbeatConnection:Disconnect()
+                heartbeatConnection = nil
                 return
             end
             
             if movedFar() then
                 holding = false
-                connection:Disconnect()
+                heartbeatConnection:Disconnect()
+                heartbeatConnection = nil
                 return
             end
             
@@ -197,7 +207,8 @@ frame.InputBegan:Connect(function(input)
                     fadeIn()
                 end
                 holding = false
-                connection:Disconnect()
+                heartbeatConnection:Disconnect()
+                heartbeatConnection = nil
             end
         end)
     end
@@ -206,6 +217,10 @@ end)
 frame.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         holding = false
+        if heartbeatConnection then
+            heartbeatConnection:Disconnect()
+            heartbeatConnection = nil
+        end
     end
 end)
 
@@ -495,602 +510,4 @@ local function loadAnimations()
             ["Toy"] = "10921310341",
             ["Vampire"] = "10921325443",
             ["Werewolf"] = "10921341319",
-            ["Wicked (Popular)"] = "113199415118199",
-            ["No Boundaries (Walmart)"] = "18747071682"
-        },
-        ["Swim"] = {
-            ["Astronaut"] = "891663592",
-            ["Adidas Community"] = "133308483266208",
-            ["Bubbly"] = "910028158",
-            ["Bold"] = "16738339158",
-            ["Cartoony"] = "10921079380",
-            ["Catwalk Glam"] = "134591743181628",
-            ["CowBoy"] = "1014406523",
-            ["Confident"] = "1070009914",
-            ["Elder"] = "10921108971",
-            ["Knight"] = "10921125160",
-            ["Mage"] = "707876443",
-            ["NFL"] = "132697394189921",
-            ["OldSchool"] = "10921243048",
-            ["PopStar"] = "1212998578",
-            ["Princess"] = "941018893",
-            ["Pirate"] = "750784579",
-            ["Patrol"] = "1151204998",
-            ["R6"] = "12518152696",
-            ["Robot"] = "10921253142",
-            ["Levitation"] = "10921138209",
-            ["Stylish"] = "10921281000",
-            ["SuperHero"] = "10921295495",
-            ["Sneaky"] = "1132500520",
-            ["Sports (Adidas)"] = "18537389531",
-            ["Toy"] = "10921309319",
-            ["Vampire"] = "10921324408",
-            ["Werewolf"] = "10921340419",
-            ["Wicked (Popular)"] = "99384245425157",
-            ["No Boundaries (Walmart)"] = "18747073181",
-            ["Zombie"] = "616165109"
-        },
-        ["Climb"] = {
-            ["Astronaut"] = "10921032124",
-            ["Adidas Community"] = "88763136693023",
-            ["Bold"] = "16738332169",
-            ["Cartoony"] = "742636889",
-            ["Catwalk Glam"] = "119377220967554",
-            ["Confident"] = "1069946257",
-            ["CowBoy"] = "1014380606",
-            ["Elder"] = "845392038",
-            ["Ghost"] = "616003713",
-            ["Knight"] = "10921125160",
-            ["Levitation"] = "10921132092",
-            ["Mage"] = "707826056",
-            ["Ninja"] = "656114359",
-            ["NFL"] = "134630013742019",
-            ["OldSchool"] = "10921229866",
-            ["Patrol"] = "1148811837",
-            ["Popstar"] = "1213044953",
-            ["Princess"] = "940996062",
-            ["R6"] = "12520982150",
-            ["Reanimated R15"] = "4211214992",
-            ["Robot"] = "616086039",
-            ["Sneaky"] = "1132461372",
-            ["Sports (Adidas)"] = "18537363391",
-            ["Stylish"] = "10921271391",
-            ["Stylized Female"] = "4708184253",
-            ["SuperHero"] = "10921286911",
-            ["Toy"] = "10921300839",
-            ["Vampire"] = "1083439238",
-            ["WereWolf"] = "10921329322",
-            ["Wicked (Popular)"] = "131326830509784",
-            ["No Boundaries (Walmart)"] = "18747060903",
-            ["Zombie"] = "616156119"
-        }
-    }
-
-    -- Try to load from file, otherwise use original
-    if isfile("GreyLikesToSmellUrFeet.json") then
-        local success, data = pcall(function()
-            return readfile("GreyLikesToSmellUrFeet.json")
-        end)
-        if success then
-            Animations = HttpService:JSONDecode(data)
-        else
-            Animations = OriginalAnimations
-        end
-    else
-        pcall(function()
-            writefile("GreyLikesToSmellUrFeet.json", HttpService:JSONEncode(OriginalAnimations))
-        end)
-        Animations = OriginalAnimations
-    end
-    
-    animationsLoaded = true
-    return Animations
-end
-
--- BUTTON POOL MANAGEMENT
-local function createButtonPool()
-    for i = 1, visibleButtonCount do
-        local button = Instance.new("TextButton")
-        button.Name = "PoolButton_" .. i
-        button.Font = Enum.Font.SourceSansBold
-        button.TextScaled = true
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        button.Size = UDim2.new(1, 0, 0, 35)
-        button.Position = UDim2.new(0, 0, 0, (i-1) * 40)
-        button.BackgroundTransparency = 0
-        button.BorderSizePixel = 0
-        button.Visible = false
-
-        local buttonCorner = Instance.new("UICorner")
-        buttonCorner.CornerRadius = UDim.new(0, 6)
-        buttonCorner.Parent = button
-
-        button.Parent = scrollFrame
-        table.insert(buttonPool, button)
-    end
-end
-
-createButtonPool()
-
--- VIRTUALIZED SCROLLING
-local allAnimationData = {}
-local filteredAnimationData = {}
-
-local function populateAnimationData()
-    local typeOrder = {"Idle", "Walk", "Run", "Jump", "Fall", "Swim", "SwimIdle", "Climb"}
-    
-    for _, animType in ipairs(typeOrder) do
-        local anims = Animations[animType]
-        if anims then
-            for name, ids in pairs(anims) do
-                table.insert(allAnimationData, {
-                    name = name,
-                    type = animType,
-                    ids = ids,
-                    displayText = name .. " - " .. animType
-                })
-            end
-        end
-    end
-    
-    filteredAnimationData = allAnimationData
-end
-
--- FIXED: Button callback management
-local function updateVisibleButtons()
-    local searchText = searchBar.Text:lower()
-    
-    -- Filter data if needed
-    if searchText ~= "" then
-        filteredAnimationData = {}
-        for _, data in ipairs(allAnimationData) do
-            if data.displayText:lower():find(searchText) then
-                table.insert(filteredAnimationData, data)
-            end
-        end
-    else
-        filteredAnimationData = allAnimationData
-    end
-    
-    -- Calculate visible range
-    local scrollPosition = scrollFrame.CanvasPosition.Y
-    local startIndex = math.floor(scrollPosition / 40) + 1
-    local endIndex = math.min(startIndex + visibleButtonCount - 1, #filteredAnimationData)
-    
-    -- Clear existing connections
-    for i, connection in ipairs(buttonConnections) do
-        if connection then
-            connection:Disconnect()
-        end
-    end
-    buttonConnections = {}
-    
-    -- Update button pool
-    for i, button in ipairs(buttonPool) do
-        local dataIndex = startIndex + i - 1
-        
-        if dataIndex <= endIndex and dataIndex <= #filteredAnimationData then
-            local data = filteredAnimationData[dataIndex]
-            button.Text = data.displayText
-            button.Position = UDim2.new(0, 0, 0, (dataIndex-1) * 40)
-            button.Visible = true
-            
-            -- Store the new connection
-            buttonConnections[i] = button.MouseButton1Click:Connect(function()
-                pcall(function()
-                    setAnimation(data.type, data.ids)
-                end)
-            end)
-        else
-            button.Visible = false
-        end
-    end
-    
-    -- Update canvas size
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #filteredAnimationData * 40)
-end
-
--- DEBOUNCED SEARCH
-local searchDebounce
-searchBar:GetPropertyChangedSignal("Text"):Connect(function()
-    if searchDebounce then
-        searchDebounce:Disconnect()
-    end
-    
-    searchDebounce = task.delay(0.3, function()
-        updateVisibleButtons()
-        searchDebounce = nil
-    end)
-end)
-
--- LAZY LOAD INITIALIZATION
-local function initializeGUI()
-    loadAnimations()
-    populateAnimationData()
-    updateVisibleButtons()
-    
-    -- Load in background to prevent lag
-    task.spawn(function()
-        -- Pre-load a few more animations if needed
-        for i = 1, math.min(50, #allAnimationData) do
-            task.wait()
-        end
-    end)
-end
-
--- Initialize after a short delay to prevent initial lag
-task.delay(0.5, initializeGUI)
-
-local FLabel = Instance.new("TextLabel")
-FLabel.Name = "FLabel"
-FLabel.Text = "F"
-FLabel.Font = Enum.Font.GothamBold
-FLabel.TextScaled = true
-FLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-FLabel.BackgroundTransparency = 1
-FLabel.Size = UDim2.new(1, 0, 1, 0)
-FLabel.Position = UDim2.new(0, 0, 0, 0)
-FLabel.Visible = false
-FLabel.Parent = frame
-
--- UPDATED SIZES FOR TALLER WINDOW
-local normalSize = getScaledSize(0.3, 0.6) -- TALLER: 60% height
-local normalPosition = UDim2.new(0.5, -normalSize.X.Offset / 2, 0.5, -normalSize.Y.Offset / 2)
-local smallerSize = getScaledSize(0.1, 0.1) -- Minimized size stays the same
-local smallerPosition = UDim2.new(1, -smallerSize.X.Offset - 10, 0, 10) -- Top-right corner
-local isSmall = false
-local clickCount = 0
-
-local function handleDoubleClick()
-    if isSmall then
-        -- Return to normal size (TALLER)
-        frame.Size = normalSize
-        frame.Position = normalPosition
-        scrollFrame.Visible = true
-        searchBar.Visible = true
-        FLabel.Visible = false
-    else
-        -- Minimize to square in top-right corner
-        frame.Size = smallerSize
-        frame.Position = smallerPosition
-        scrollFrame.Visible = false
-        searchBar.Visible = false
-        FLabel.Visible = true
-    end
-    isSmall = not isSmall
-end
-
-frame.MouseButton1Click:Connect(function()
-    clickCount += 1
-    if clickCount == 1 then
-        task.delay(0.45, function()
-            clickCount = 0
-        end)
-    elseif clickCount == 2 then
-        handleDoubleClick()
-        clickCount = 0
-    end
-end)
-
-scrollFrame:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
-    updateVisibleButtons()
-end)
-
-local lastAnimations = {}
-
--- Load saved animations immediately and cache them
-local function loadSavedAnimationsToCache()
-    if isfile("MeWhenUrMom.json") then
-        local success, data = pcall(function()
-            return readfile("MeWhenUrMom.json")
-        end)
-        if success then
-            local loadedData = HttpService:JSONDecode(data)
-            -- Deep copy to cache
-            for animType, animId in pairs(loadedData) do
-                lastAnimations[animType] = animId
-            end
-            return true
-        end
-    end
-    return false
-end
-
--- Load animations to cache on script start
-loadSavedAnimationsToCache()
-
--- Improved animation handling
-local function StopAnim()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if Hum then
-        for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-            if track then
-                track:Stop(0.1) -- Smooth stop
-            end
-        end
-    end
-end
-
--- Improved reset functions
-local function ResetIdle()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and (track.Name == "idle" or track.Name == "IdleAnimation") then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetWalk()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "walk" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetRun()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "run" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetJump()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "jump" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetFall()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "fall" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetSwim()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "swim" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetSwimIdle()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "swimidle" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function ResetClimb()
-    local speaker = Players.LocalPlayer
-    local Char = speaker.Character
-    if not Char then return end
-    local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-    if not Hum then return end
-    
-    for _, track in ipairs(Hum:GetPlayingAnimationTracks()) do
-        if track and track.Name == "climb" then
-            track:Stop(0.1)
-        end
-    end
-end
-
-local function saveLastAnimations()
-    local data = HttpService:JSONEncode(lastAnimations)
-    pcall(function() 
-        writefile("MeWhenUrMom.json", data) 
-    end)
-end
-
--- BATCHED ANIMATION SYSTEM
-local pendingAnimations = {}
-local animationApplyDebounce
-
-local function applyPendingAnimations()
-    if animationApplyDebounce then return end
-    
-    animationApplyDebounce = true
-    task.delay(0.1, function()
-        local player = Players.LocalPlayer
-        if not player.Character then 
-            animationApplyDebounce = false
-            return
-        end
-        
-        local Char = player.Character
-        local Animate = Char:FindFirstChild("Animate")
-        if not Animate then 
-            animationApplyDebounce = false
-            return
-        end
-
-        pcall(function()
-            StopAnim()
-            task.wait(0.05)
-            
-            for animType, animId in pairs(pendingAnimations) do
-                lastAnimations[animType] = animId
-                
-                if animType == "Idle" then
-                    ResetIdle()
-                    Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. animId[1]
-                    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. animId[2]
-                elseif animType == "Walk" then
-                    ResetWalk()
-                    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
-                elseif animType == "Run" then
-                    ResetRun()
-                    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
-                elseif animType == "Jump" then
-                    ResetJump()
-                    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
-                elseif animType == "Fall" then
-                    ResetFall()
-                    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
-                elseif animType == "Swim" and Animate:FindFirstChild("swim") then
-                    ResetSwim()
-                    Animate.swim.Swim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
-                elseif animType == "SwimIdle" and Animate:FindFirstChild("swimidle") then
-                    ResetSwimIdle()
-                    Animate.swimidle.SwimIdle.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
-                elseif animType == "Climb" then
-                    ResetClimb()
-                    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. animId
-                end
-            end
-            
-            pendingAnimations = {}
-            saveLastAnimations()
-            
-            local humanoid = Char:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid:Move(Vector3.new(0, 0, 0))
-            end
-        end)
-        
-        animationApplyDebounce = false
-    end)
-end
-
--- Improved setAnimation function
-function setAnimation(animationType, animationId)
-    if type(animationId) ~= "table" and type(animationId) ~= "string" then return end
-    
-    pendingAnimations[animationType] = animationId
-    applyPendingAnimations()
-end
-
--- Apply animations on character load
-local function applyCachedAnimations(character)
-    local hum = character:WaitForChild("Humanoid")
-    local animate = character:WaitForChild("Animate", 5)
-    if not animate then return end
-    
-    task.wait(0.5) -- Wait for character to fully initialize
-    
-    -- Apply cached animations with small delays between each
-    local applyOrder = {"Idle", "Walk", "Run", "Jump", "Fall", "Climb", "Swim", "SwimIdle"}
-    
-    for _, animType in ipairs(applyOrder) do
-        if lastAnimations[animType] then
-            task.wait(0.1) -- Small delay to prevent race conditions
-            setAnimation(animType, lastAnimations[animType])
-        end
-    end
-end
-
--- OPTIMIZED CHARACTER EVENT HANDLING
-local characterConnection
-characterConnection = Players.LocalPlayer.CharacterAdded:Connect(function(character)
-    -- Disconnect old connection to prevent multiple handlers
-    if characterConnection then
-        characterConnection:Disconnect()
-        characterConnection = nil
-    end
-    
-    -- Apply animations with retry logic
-    local retryCount = 0
-    local maxRetries = 3
-    
-    local function tryApplyAnimations()
-        retryCount = retryCount + 1
-        
-        if retryCount > maxRetries then
-            return
-        end
-        
-        local success, err = pcall(function()
-            applyCachedAnimations(character)
-        end)
-        
-        if not success and retryCount <= maxRetries then
-            task.wait(1) -- Wait before retry
-            tryApplyAnimations()
-        end
-    end
-    
-    tryApplyAnimations()
-    
-    -- Reconnect for future character respawns
-    characterConnection = Players.LocalPlayer.CharacterAdded:Connect(function(newChar)
-        task.wait(0.1) -- Small delay
-        local newRetryCount = 0
-        local function retryNewChar()
-            newRetryCount = newRetryCount + 1
-            if newRetryCount <= maxRetries then
-                local success = pcall(function()
-                    applyCachedAnimations(newChar)
-                end)
-                if not success and newRetryCount < maxRetries then
-                    task.wait(1)
-                    retryNewChar()
-                end
-            end
-        end
-        retryNewChar()
-    end)
-end)
-
--- Apply animations to current character if exists
-if Players.LocalPlayer.Character then
-    task.wait(1) -- Wait for everything to load
-    applyCachedAnimations(Players.LocalPlayer.Character)
-end
-
-local lt = os.clock() - st
-Notify("Optimized Load", string.format("in %.2f seconds.", lt), 3)
-
-end)
+            [
